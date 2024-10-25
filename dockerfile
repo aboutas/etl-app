@@ -25,3 +25,4 @@ COPY input.json /opt/flink/app/input.json
 RUN mkdir -p /opt/flink/output
 
 CMD ["python", "/opt/flink/app/flink_code.py"]
+
