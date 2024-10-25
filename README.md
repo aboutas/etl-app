@@ -1,3 +1,10 @@
+# Dynamic Mapping Solution for ETL Source and Destination
+This project offers a proposed solution to the problem of dynamic mapping in both the source and destination stages of ETL processes.
+
+The solution accepts a JSON input file, simulating various schemas that may be loaded into the ETL pipeline. A custom schema registry handles schema management, allowing flexible adjustments based on the data structure dynamically (source dynamic mapping).
+
+The data processed includes metrics like temperature. When fields for "heating cost" and "currency" are present, an additional column, "heating cost in euros," is calculated based on currency exchange rates (destination mapping). This feature allows for seamless integration and transformation of varying data schemas within the ETL process.
+
 # PROJECT STRUCTURE:
 
 * flink_code.py: Main script that sets up the Flink streaming environment, loads input data, applies transformations, and writes output to a JSON file.
