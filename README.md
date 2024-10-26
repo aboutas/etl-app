@@ -31,7 +31,8 @@ The data processed includes metrics like temperature. When fields for "heating c
 build -t flink-job-image . 
 ```
 
-## Run the Docker container: After building the image, run the following command to execute the Flink job:
+## Run the Docker container: 
+After building the image, run the following command to execute the Flink job:
 ```
 docker run --name flink-job-container -v C:/path_to_your_local_output_directory:/opt/flink/output flink-job-image
 ```
