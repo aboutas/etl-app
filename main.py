@@ -1,8 +1,8 @@
 from pyflink.datastream import StreamExecutionEnvironment
 from pyflink.datastream.functions import MapFunction
 import json
-import schema_registry
-import dynamic_transform
+import schema_manager
+import rule_manager_transform    
 
 env = StreamExecutionEnvironment.get_execution_environment()
 
@@ -11,7 +11,7 @@ with open('/opt/flink/app/input.json', 'r') as f:
 
 data_stream = env.from_collection([json.dumps(item) for item in json_inputs])
 
-transformed_stream = data_stream.map(dynamic_transform.DynamicTransform(schema_registry.schema_registry))
+transformed_stream = data_stream.map(rule_manager_transform.RuleManagerTransform(schema_manager.schema_registry))
 
 def write_to_json_file(value):
     """

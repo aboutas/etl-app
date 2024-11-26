@@ -1,4 +1,4 @@
-class SchemaRegistry:
+class SchemaManager:
     """
     A class to manage and retrieve schemas dynamically for different data sources.
 
@@ -82,10 +82,10 @@ class SchemaRegistry:
 
         return self.schemas[latest_version]
 
-# Mock schema registry and register dynamic schemas
-schema_registry = SchemaRegistry()
-schema_registry.register_schema('input_json', 1, {'fields': ['temperature', 'humidity']})
-schema_registry.register_schema('input_json', 2, {'fields': ['temperature', 'humidity', 'heating_cost', 'currency']})
-schema_registry.register_schema('input_json', 3, {'fields': ['temperature', 'humidity', 'heating_cost', 'currency', 'extra_column']})
-
+#Mock schema registry and register dynamic schemas
+schema_registry = SchemaManager()
+schema_registry.register_schema('input_json', 1, {'fields': ['customer id', 'cost']})
+schema_registry.register_schema('input_json', 2, {'fields': ['customer id', 'cost', 'consumption', 'name']})
+schema_registry.register_schema('input_json', 3, {'fields': ['customer id', 'cost', 'consumption', 'last_name', 'extra_column']})
+ 
 
