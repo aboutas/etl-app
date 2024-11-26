@@ -61,10 +61,25 @@ class SchemaRegistry:
         Example:
             latest_schema = schema_registry.get_latest_schema('input_json')
         """
-        schemas_for_source = {k: v for k, v in self.schemas.items() if k[0] == source}
+        # schemas_for_source = {k: v for k, v in self.schemas.items() if k[0] == source}
+        # if not schemas_for_source:
+        #     raise ValueError(f"No schemas found for source: {source}")
+        # latest_version = max(schemas_for_source, key=lambda x: x[1])
+        # return self.schemas[latest_version]
+        schemas_for_source = {}
+        for k, v in self.schemas.items():
+            if k[0] == source:
+                schemas_for_source[k] = v
+
         if not schemas_for_source:
             raise ValueError(f"No schemas found for source: {source}")
-        latest_version = max(schemas_for_source, key=lambda x: x[1])
+
+        # Find the maximum schema version key without lambda
+        latest_version = None
+        for key in schemas_for_source.keys():
+            if latest_version is None or key[1] > latest_version[1]:
+                latest_version = key
+
         return self.schemas[latest_version]
 
 # Mock schema registry and register dynamic schemas

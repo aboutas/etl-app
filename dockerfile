@@ -18,7 +18,7 @@ RUN pip install apache-flink==1.17.0
 # Set the working directory inside the container
 WORKDIR /opt/flink/app
 
-COPY flink_code.py .
+COPY main.py .
 COPY schema_registry.py .
 COPY dynamic_transform.py .
 
@@ -26,4 +26,4 @@ COPY input.json /opt/flink/app/input.json
 
 RUN mkdir -p /opt/flink/output
 
-CMD ["python", "/opt/flink/app/flink_code.py"]
+CMD ["python", "/opt/flink/app/main.py"]
