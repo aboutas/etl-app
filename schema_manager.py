@@ -61,11 +61,6 @@ class SchemaManager:
         Example:
             latest_schema = schema_registry.get_latest_schema('input_json')
         """
-        # schemas_for_source = {k: v for k, v in self.schemas.items() if k[0] == source}
-        # if not schemas_for_source:
-        #     raise ValueError(f"No schemas found for source: {source}")
-        # latest_version = max(schemas_for_source, key=lambda x: x[1])
-        # return self.schemas[latest_version]
         schemas_for_source = {}
         for k, v in self.schemas.items():
             if k[0] == source:

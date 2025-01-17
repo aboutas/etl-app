@@ -10,8 +10,10 @@ with open('/opt/flink/app/input.json', 'r') as f:
     json_inputs = json.load(f)
 
 data_stream = env.from_collection([json.dumps(item) for item in json_inputs])
-
 transformed_stream = data_stream.map(rule_manager_transform.RuleManagerTransform(schema_manager.schema_registry))
+# with open('rules.json', 'r') as f:
+#     rules = json.load(f)
+# transformed_stream = data_stream.map(rule_manager_transform.RuleManagerTransform(schema_manager.schema_registry, rules))
 
 def write_to_json_file(value):
     """

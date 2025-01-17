@@ -1,0 +1,3 @@
+{"rule1": "Bob Smith", "rule2": "3 Bob Smith, Cost: euro 300", "rule3": "N/A", "applied_rules": ["rule1", "rule2", "rule3"]}
+{"rule1": " ", "rule2": "1  , Cost: euro 100", "rule3": "N/A", "applied_rules": ["rule1", "rule2", "rule3"]}
+{"rule1": "Alice Cooper", "rule2": "2 Alice Cooper, Cost: euro 200", "rule3": "N/A", "applied_rules": ["rule1", "rule2", "rule3"]}
