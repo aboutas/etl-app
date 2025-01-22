@@ -9,9 +9,9 @@ The data processed includes metrics like temperature. When fields for "heating c
 
 * flink_code.py: Main script that sets up the Flink streaming environment, loads input data, applies transformations, and writes output to a JSON file.
 
-* schema_registry.py: Manages schema registration and retrieval to enable dynamic transformations based on different schema versions.
+* schema_manager.py: Manages schema registration and retrieval to enable dynamic transformations based on different schema versions.
 
-* dynamic_transform.py: Contains the transformation logic for processing input data based on the current schema.
+* rule_manager_transform.py: Contains the transformation logic using lamda functions for processing input data based on the current schema.
 
 * input.json: Input file containing JSON records to be processed by the Flink job.
 
