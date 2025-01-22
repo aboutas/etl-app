@@ -11,7 +11,7 @@ The data processed includes metrics like temperature. When fields for "heating c
 
 * schema_manager.py: Manages schema registration and retrieval to enable dynamic transformations based on different schema versions.
 
-* rule_manager_transform.py: Contains the transformation logic using lamda functions for processing input data based on the current schema.
+* transform_rules_manager.py: Contains the transformation logic using lamda functions for processing input data based on the current schema.
 
 * input.json: Input file containing JSON records to be processed by the Flink job.
 
