@@ -2,68 +2,73 @@ Some common Transformations are presented on the follow link : https://www.cdata
 
 A consolidated list of Transformations by category is given below
 
+Marking 1: todo
+        2: Trying to do,
+        3: Maybe not implement
+        4: Delete, exists in other transformation or doen't have meaning
+
 •	Data Cleaning
-   o	Handling Missing Values: Filling in missing data using default values, averages, or interpolation.
-   o	Removing Duplicates: Identifying and removing duplicate rows or records.
-   o	Standardizing Formats: Converting inconsistent into a unified format.
-   o	Error Correction: Fixing typographical errors or invalid entries.
+   o	Handling Missing Values: Filling in missing data using default values, averages, or interpolation. 2
+   o	Removing Duplicates: Identifying and removing duplicate rows or records. 3
+   o	Standardizing Formats: Converting inconsistent into a unified format. 1
+   o	Error Correction: Fixing typographical errors or invalid entries. 4
 
 •	Data Integration
-   o	Combining Data: Merging data from multiple sources (e.g., databases or files) into a single unified format.
-   o	Deduplication: Ensuring that no redundant records exist after merging.
+   o	Combining Data: Merging data from multiple sources (e.g., databases or files) into a single unified format. 1
+   o	Deduplication: Ensuring that no redundant records exist after merging. 3
 
 •	Data Aggregation
-   o	Summarization: Creating summaries such as totals, averages, or counts.
-   o	Grouping: Grouping data by specific fields and applying aggregate functions.
+   o	Summarization: Creating summaries such as totals, averages, or counts. 1
+   o	Grouping: Grouping data by specific fields and applying aggregate functions. 2
 
 •	Data Filtering
-   o	Row Filtering: Excluding rows that don't meet specific criteria (e.g., transactions over a certain threshold).
-   o	Column Filtering: Dropping unnecessary or irrelevant columns.
+   o	Row Filtering: Excluding rows that don't meet specific criteria (e.g., transactions over a certain threshold). 1
+   o	Column Filtering: Dropping unnecessary or irrelevant columns. 1
 
 •	Data Enrichment
-   o	Adding Calculated Fields: Creating new columns based on calculations (e.g., profit = revenue - cost).
-   o	Lookup and Reference: Adding information by referencing external datasets.
+   o	Adding Calculated Fields: Creating new columns based on calculations (e.g., profit = revenue - cost). 1
+   o	Lookup and Reference: Adding information by referencing external datasets. (Usefull for duplication)
 
 •	Data Standardization
-   o	Renaming Columns: Renaming fields to meet naming conventions or improve clarity.
-   o	Standardizing Units: Converting units to a consistent measure (e.g., converting all weights to kilograms).
-   o	Capitalization Rules: Standardizing text formats (e.g., making all names uppercase).
+   o	Renaming Columns: Renaming fields to meet naming conventions or improve clarity. 1
+   o	Standardizing Units: Converting units to a consistent measure (e.g., converting all weights to kilograms). 1
+   o	Capitalization Rules: Standardizing text formats (e.g., making all names uppercase). 1
 
 •	Data Validation
-   o	Range Checks: Ensuring numeric values fall within acceptable ranges.
+   o	Range Checks: Ensuring numeric values fall within acceptable ranges. 1
    o	Domain Validation: Checking that values belong to a predefined set of acceptable options.
-
+ 1
 •	Data Transformation
-   o	Type Conversion: Changing data types (e.g., string to integer).
+   o	Type Conversion: Changing data types (e.g., string to integer). 1
    o	Pivoting and Unpivoting: Converting rows to columns or vice versa for analytical compatibility.
-   o	Normalization: Scaling data to fit within a specific range (e.g., 0–1).
-   o	Denormalization: Flattening data structures to simplify querying or analysis.
+   o	Normalization: Scaling data to fit within a specific range (e.g., 0–1). 1
+   o	Denormalization: Flattening data structures to simplify querying or analysis. 1
 
 •	Data Sorting
-   o	Sorting Rows: Arranging records in ascending or descending order based on one or more fields.
+   o	Sorting Rows: Arranging records in ascending or descending order based on one or more fields. 2
 
 •	Key Handling
-   o	Primary Key Generation: Creating unique identifiers for rows.
-   o	Foreign Key Mapping: Establishing relationships between datasets.
-
+   o	Primary Key Generation: Creating unique identifiers for rows. 3
+   o	Foreign Key Mapping: Establishing relationships between datasets. 3
+ 
 •	Geospatial Transformations
-   o	Address Parsing: Breaking down an address into components like street, city, and postal code.
-   o	Geocoding: Adding latitude and longitude coordinates to location data.
+   o	Address Parsing: Breaking down an address into components like street, city, and postal code. 2
+   o	Geocoding: Adding latitude and longitude coordinates to location data. 2
 
 •	Text Manipulation
-   o	Splitting or Joining Strings: Dividing a string into components or concatenating multiple strings.
-   o	Trimming: Removing leading or trailing spaces.
-   o	Regex Operations: Using regular expressions to extract or manipulate text.
+   o	Splitting or Joining Strings: Dividing a string into components or concatenating multiple strings. 1
+   o	Trimming: Removing leading or trailing spaces. 1
+   o	Regex Operations: Using regular expressions to extract or manipulate text. 1
 
 •	Time-Based Transformations
-   o	Date Extraction: Extracting parts of dates (e.g., year, month).
-   o	Time Series Alignment: Aggregating or interpolating time-series data for consistency.
+   o	Date Extraction: Extracting parts of dates (e.g., year, month). 1
+   o	Time Series Alignment: Aggregating or interpolating time-series data for consistency. 4
 
 •	Anonymization and Masking
-   o	Data Masking: Replacing sensitive information with dummy data.
-   o	Tokenization: Replacing sensitive data with unique identifiers.
+   o	Data Masking: Replacing sensitive information with dummy data. 1
+   o	Tokenization: Replacing sensitive data with unique identifiers. 1
 
 •	Data Splitting
-   o	Partitioning: Dividing data into segments for better management or analysis (e.g., splitting by region).
+   o	Partitioning: Dividing data into segments for better management or analysis (e.g., splitting by region). 4
 
 Each transformation addresses a specific need for making data actionable, clean, and efficient for downstream processes.

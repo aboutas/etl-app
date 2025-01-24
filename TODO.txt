@@ -1,0 +1,12 @@
+TODO 
+Date: 24/01/2025  
+
+- Create a test bucket with different JSON files.  
+  (Consider using a Kafka topic later for real streaming data.)  
+
+- Extend `transform_rules_manager.py` to support all **Order 1** rules  
+  from `list_of_transformations.txt`.  
+
+- Design a structure for managing both `transform_rules_manager.py`  
+  and `schema_manager.py`.  
+  (Potentially integrate with Kafka in a later phase.)  
