@@ -10,3 +10,5 @@ Date: 24/01/2025
 - Design a structure for managing both `transform_rules_manager.py`  
   and `schema_manager.py`.  
   (Potentially integrate with Kafka in a later phase.)  
+
+- Implement a system for storing results in a database or another storage solution.
