@@ -44,8 +44,8 @@ etl_project/
       Whenever a new event arrives, check schema_registry_topic for updates.
       Deserialize data based on the correct schema.
 
-  4. Future Enhancements
-    Use Kafka Streams to preprocess incoming messages before Flink consumes them.
-    Add a metadata store (e.g., PostgreSQL or MongoDB) to persist schema versions.
-    Expose REST API for managing schema updates in real-time.
+    4. Future Enhancements
+      Use Kafka Streams to preprocess incoming messages before Flink consumes them.
+      Add a metadata store (e.g., PostgreSQL or MongoDB) to persist schema versions.
+      Expose REST API for managing schema updates in real-time.
     
