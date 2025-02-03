@@ -1,14 +1,51 @@
 TODO 
 Date: 24/01/2025  
 
+Suggested project structure
+etl_project/
+│── main.py                          # Entry point of your Flink ETL job
+│── schema_manager.py                 # Handles schema versions & retrieval
+│── transformation_manager.py         # Applies transformations dynamically
+│── kafka_producer.py                 # Produces input messages to Kafka
+│── kafka_consumer.py                 # Consumes messages for processing
+│── config.py                         # Holds configuration (Kafka topics, schema registry URL, etc.)
+│── tests/                            # Unit tests for components
+│── utils.py                          # Common helper functions
+
+
 - Create a test bucket with different JSON files.  
   (Consider using a Kafka topic later for real streaming data.)  
 
 - Extend `transform_rules_manager.py` to support all **Order 1** rules  
   from `list_of_transformations.txt`.  
 
-- Design a structure for managing both `transform_rules_manager.py`  
-  and `schema_manager.py`.  
-  (Potentially integrate with Kafka in a later phase.)  
-
 - Implement a system for storing results in a database or another storage solution.
+
+- Design a structure for managing both `transform_rules_manager.py`  
+  and `schema_manager.py`Using Kafka :
+    1. Kafka Integration
+      Instead of hardcoding schemas, you can store and retrieve them dynamically via Kafka:
+
+      Schema Manager sends schema updates to a Kafka topic (schema_registry_topic).
+      Transformation Manager listens to another Kafka topic (transformation_rules_topic).
+      Flink job reads incoming data from Kafka and applies rules dynamically.
+
+    2. Dynamic Schema Handling in Flink (PyFlink)
+      Since the schema can change over time, your Flink job should handle different schema versions dynamically:
+
+      Use Flink’s stateful processing to cache schema versions.
+      Whenever a new event arrives, check schema_registry_topic for updates.
+      Deserialize data based on the correct schema.  
+
+    3. Dynamic Schema Handling in Flink (PyFlink)
+      Since the schema can change over time, your Flink job should handle different schema versions dynamically:
+
+      Use Flink’s stateful processing to cache schema versions.
+      Whenever a new event arrives, check schema_registry_topic for updates.
+      Deserialize data based on the correct schema.
+
+  4. Future Enhancements
+    Use Kafka Streams to preprocess incoming messages before Flink consumes them.
+    Add a metadata store (e.g., PostgreSQL or MongoDB) to persist schema versions.
+    Expose REST API for managing schema updates in real-time.
+    
