@@ -1,0 +1,49 @@
+Data Cleaning
+    ✅ Handling Missing Values: Filling in missing data using default values, averages, or interpolation. (Handled via standardize_format, but can be extended for interpolation)
+    ❌ Removing Duplicates: Identifying and removing duplicate rows or records.
+    ✅ Standardizing Formats: Converting inconsistent formats into a unified format. (standardize_format)
+    ❌ Error Correction: Fixing typographical errors or invalid entries.
+Data Integration
+    ✅ Combining Data: Merging data from multiple sources (Implemented via denormalization).
+    ❌ Deduplication: Ensuring that no redundant records exist after merging.
+Data Aggregation
+    ✅ Summarization: Creating summaries such as totals, averages, or counts. (summarization)
+    🔄 Grouping: Grouping data by specific fields and applying aggregate functions. (Can be extended)
+Data Filtering
+    ✅ Row Filtering: Excluding rows that don't meet specific criteria (e.g., transactions over a certain threshold). (row_filtering)
+    ✅ Column Filtering: Dropping unnecessary or irrelevant columns. (column_filtering)
+Data Enrichment
+    ✅ Adding Calculated Fields: Creating new columns based on calculations (e.g., profit = revenue - cost). (normalization, summarization)
+    ❌ Lookup and Reference: Adding information by referencing external datasets. (Needs lookup table integration)
+Data Standardization
+    ✅ Renaming Columns: Renaming fields to meet naming conventions or improve clarity. (renaming_columns)
+    ✅ Standardizing Units: Converting units to a consistent measure (e.g., converting all weights to kilograms). (standardizing_units)
+    ✅ Capitalization Rules: Standardizing text formats (e.g., making all names uppercase). (capitalization_rules)
+Data Validation
+    ✅ Range Checks: Ensuring numeric values fall within acceptable ranges. (range_checks)
+    ✅ Domain Validation: Checking that values belong to a predefined set of acceptable options. (range_checks, but could be extended further)
+Data Transformation
+    ✅ Type Conversion: Changing data types (e.g., string to integer). (type_conversion)
+    ❌ Pivoting and Unpivoting: Converting rows to columns or vice versa for analytical compatibility.
+    ✅ Normalization: Scaling data to fit within a specific range (e.g., 0–1). (normalization)
+    ✅ Denormalization: Flattening data structures to simplify querying or analysis. (denormalization)
+Data Sorting
+    ❌ Sorting Rows: Arranging records in ascending or descending order based on one or more fields. (Sorting needs to be added explicitly)
+Key Handling
+    ❌ Primary Key Generation: Creating unique identifiers for rows.
+    ❌ Foreign Key Mapping: Establishing relationships between datasets.
+Geospatial Transformations
+    ❌ Address Parsing: Breaking down an address into components like street, city, and postal code.
+    ❌ Geocoding: Adding latitude and longitude coordinates to location data.
+Text Manipulation
+    ✅ Splitting or Joining Strings: Dividing a string into components or concatenating multiple strings. (standardize_format, denormalization)
+    ✅ Trimming: Removing leading or trailing spaces. (trimming)
+    ✅ Regex Operations: Using regular expressions to extract or manipulate text. (regex_operations)
+Time-Based Transformations
+    ✅ Date Extraction: Extracting parts of dates (e.g., year, month). (date_extraction)
+    ❌ Time Series Alignment: Aggregating or interpolating time-series data for consistency.
+Anonymization and Masking
+    ✅ Data Masking: Replacing sensitive information with dummy data. (data_masking)
+    ✅ Tokenization: Replacing sensitive data with unique identifiers. (tokenization)
+Data Splitting
+    ❌ Partitioning: Dividing data into segments for better management or analysis.

@@ -14,7 +14,7 @@ Marking 1: todo
    o	Error Correction: Fixing typographical errors or invalid entries. 4
 
 •	Data Integration
-   o	Combining Data: Merging data from multiple sources (e.g., databases or files) into a single unified format. 1
+   o	Combining Data: Merging data from multiple sources (e.g., databases or files) into a single unified format. 1 
    o	Deduplication: Ensuring that no redundant records exist after merging. 3
 
 •	Data Aggregation
@@ -56,7 +56,7 @@ Marking 1: todo
    o	Geocoding: Adding latitude and longitude coordinates to location data. 2
 
 •	Text Manipulation
-   o	Splitting or Joining Strings: Dividing a string into components or concatenating multiple strings. 1
+   o	Splitting or Joining Strings: Dividing a string into components or concatenating multiple strings. 1 
    o	Trimming: Removing leading or trailing spaces. 1
    o	Regex Operations: Using regular expressions to extract or manipulate text. 1
 
