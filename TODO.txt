@@ -1,7 +1,7 @@
 TODO 
 Date: 24/01/2025  
 
-Project structure
+Project structure : flink-etl-pipeline
 etl_project/
 │── main.py                          # Entry point of your Flink ETL job
 │── schema_manager.py                 # Handles schema versions & retrieval
