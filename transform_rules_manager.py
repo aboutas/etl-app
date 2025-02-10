@@ -20,13 +20,13 @@ class RuleManagerTransform(MapFunction):
         # Define transformation rules by category
         self.rules_registry = rules_registry or {
             "data_cleaning": {
-                "standardize_format": lambda data: {k.lower().strip(): v for k, v in data.items()},  # Standardize key names
+                "standardize_format": lambda data: {k.lower().strip(): v for k, v in data.items()},
             },
             "data_aggregation": {
                 "summarization": lambda data: {"total_cost": sum(data.get("costs", []))},
             },
             "data_filtering": {
-                "row_filtering": lambda data: data if data.get("cost", 0) > 100 else None,  # Example threshold filter
+                "row_filtering": lambda data: data if data.get("cost", 0) > 100 else None,
                 "column_filtering": lambda data: {k: v for k, v in data.items() if k in ["customer_id", "cost", "consume"]},
             },
             "data_standardization": {
@@ -50,7 +50,7 @@ class RuleManagerTransform(MapFunction):
                 "date_extraction": lambda data: {"year": data.get("timestamp", "")[:4]} if "timestamp" in data else {},
             },
             "anonymization": {
-                "data_masking": lambda data: {"masked_id": f"XXXX-{str(data.get('customer_id', ''))[-4:]}"},  # Masking customer ID
+                "data_masking": lambda data: {"masked_id": f"XXXX-{str(data.get('customer_id', ''))[-4:]}"}, 
                 "tokenization": lambda data: {"token": hash(data.get("customer_id", ""))},
             }
         }
@@ -64,18 +64,24 @@ class RuleManagerTransform(MapFunction):
 
         Returns:
             str: Transformed JSON data as a string.
-        """ 
+        """
         try:
             input_data = json.loads(value)
             output_data = {}
 
+            applied_rules = []
+
             for category, rules in self.rules_registry.items():
+                category_results = {}  # Store transformations per category
                 for rule_name, rule_function in rules.items():
                     transformed = rule_function(input_data)
                     if transformed is not None:
-                        output_data[rule_name] = transformed
+                        category_results[rule_name] = transformed
+                        applied_rules.append(f"{category}.{rule_name}")  # Track applied rules
 
-            output_data["applied_rules"] = list(output_data.keys())  # Store applied rules
+                if category_results:
+                    output_data[category] = category_results  # Store per category
+                    output_data["applied_rules"] = applied_rules  # Store applied rules with categories
 
             return json.dumps(output_data)
         except Exception as e:
