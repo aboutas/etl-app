@@ -20,8 +20,7 @@ WORKDIR /opt/flink/app
 
 COPY main.py .
 COPY schema_manager.py .
-COPY dynamic_transform.py .
-COPY rule_manager_transform.py .
+COPY transform_rules_manager.py .
 
 COPY input.json /opt/flink/app/input.json
 

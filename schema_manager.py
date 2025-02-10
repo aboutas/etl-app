@@ -82,5 +82,6 @@ schema_registry = SchemaManager()
 schema_registry.register_schema('input_json', 1, {'fields': ['customer id', 'cost']})
 schema_registry.register_schema('input_json', 2, {'fields': ['customer id', 'cost', 'consumption', 'name']})
 schema_registry.register_schema('input_json', 3, {'fields': ['customer id', 'cost', 'consumption', 'last_name', 'extra_column']})
+schema_registry.register_schema('input_json', 4, {'fields': ['customer id', 'cost', 'consumption', 'last_name', 'street', 'city']})
  
 
