@@ -19,6 +19,18 @@ class RuleManagerTransform(MapFunction):
     def __init__(self, schema_manager, rules_registry=None):
         self.schema_manager = schema_manager
 
+        # Exchange rates dictionary
+        self.exchange_rates = {
+            'USD': 0.85,
+            'GBP': 1.17
+        }
+        
+        def get_exchange_rate(currency):
+            """
+            Returns the exchange rate for a given currency. Defaults to 1 if currency is not found.
+            """
+            return self.exchange_rates.get(currency, 1)
+
         # Define transformation rules by category
         self.rules_registry = rules_registry or {
             "data_cleaning": {
@@ -33,7 +45,7 @@ class RuleManagerTransform(MapFunction):
             },
             "data_standardization": {
                 "renaming_columns": lambda data: {"customerID": data.get("customer_id", ""), "totalCost": data.get("cost", 0)},
-                "standardizing_units": lambda data: {"cost_in_dollars": round(data.get("cost", 0) * 1.1, 2)},
+                "standardizing_units": lambda data: {"cost_in_dollars": round(data.get("cost", 0) * get_exchange_rate(data.get("currency", "USD")), 2)},
                 "capitalization_rules": lambda data: {k: (v.upper() if isinstance(v, str) else v) for k, v in data.items()},
             },
             "data_validation": {
@@ -56,6 +68,8 @@ class RuleManagerTransform(MapFunction):
                 "tokenization": lambda data: {"token": hash(data.get("customer_id", ""))},
             }
         }
+        self.schema_manager = schema_manager
+      
 
     def log_applied_rules(self, input_id, applied_rules):
         """
