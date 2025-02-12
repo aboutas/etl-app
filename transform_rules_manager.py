@@ -14,6 +14,8 @@ class RuleManagerTransform(MapFunction):
         rules_registry (dict): Dictionary of transformation rules categorized by type.
     """
 
+    LOG_FILE = "/opt/flink/output/log.txt"  # Define log file location
+
     def __init__(self, schema_manager, rules_registry=None):
         self.schema_manager = schema_manager
 
@@ -50,10 +52,25 @@ class RuleManagerTransform(MapFunction):
                 "date_extraction": lambda data: {"year": data.get("timestamp", "")[:4]} if "timestamp" in data else {},
             },
             "anonymization": {
-                "data_masking": lambda data: {"masked_id": f"XXXX-{str(data.get('customer_id', ''))[-4:]}"}, 
+                "data_masking": lambda data: {"masked_id": f"XXXX-{str(data.get('customer_id', ''))[-4:]}"},
                 "tokenization": lambda data: {"token": hash(data.get("customer_id", ""))},
             }
         }
+
+    def log_applied_rules(self, input_id, applied_rules):
+        """
+        Logs the applied rules into a file.
+
+        Args:
+            input_id (str): Unique identifier from input data.
+            applied_rules (list): List of applied transformation rules.
+        """
+        try:
+            with open(self.LOG_FILE, "a") as log_file:
+                log_entry = f"ID: {input_id} | Applied Rules: {', '.join(applied_rules)}\n"
+                log_file.write(log_entry)
+        except Exception as e:
+            print(f"Error writing to log file: {e}")
 
     def map(self, value):
         """
@@ -68,21 +85,22 @@ class RuleManagerTransform(MapFunction):
         try:
             input_data = json.loads(value)
             output_data = {}
-
             applied_rules = []
+            input_id = input_data.get("customer_id", "unknown")  # Use customer_id or set "unknown"
 
             for category, rules in self.rules_registry.items():
-                category_results = {}  # Store transformations per category
                 for rule_name, rule_function in rules.items():
                     transformed = rule_function(input_data)
                     if transformed is not None:
-                        category_results[rule_name] = transformed
+                        output_data.update(transformed)  # Merge transformed data
                         applied_rules.append(f"{category}.{rule_name}")  # Track applied rules
 
-                if category_results:
-                    output_data[category] = category_results  # Store per category
-                    output_data["applied_rules"] = applied_rules  # Store applied rules with categories
+            # Log the applied rules separately
+            if applied_rules:
+                self.log_applied_rules(input_id, applied_rules)
 
             return json.dumps(output_data)
         except Exception as e:
+            error_message = f"Error processing record: {e}"
+            self.log_applied_rules("ERROR", [error_message])
             return json.dumps({"error": str(e)})
