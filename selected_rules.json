@@ -1,11 +1,15 @@
 {
-    "data_cleaning": ["standardize_format"],
-    "data_aggregation": ["summarization"],
-    "data_standardization": ["capitalization_rules"],
-    "text_manipulation": ["trimming", "regex_operations"],
-    "time_transformations": ["date_extraction"],
-    "anonymization": ["data_masking"]
+  "data_cleaning": {
+    "standardize_format": ["name", "street"]
+  },
+  "data_aggregation": {
+    "summarization": ["cost", "consumption"]
+  },
+  "anonymization": {
+    "data_masking": ["customer_id"]
   }
+}
+
 
 
 

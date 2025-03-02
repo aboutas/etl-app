@@ -31,18 +31,6 @@ class RuleManagerTransform(MapFunction):
             return {}
        
     def initalize_rules(self):
-        # Exchange rates dictionary
-        self.exchange_rates = {
-            'USD': 0.85,
-            'GBP': 1.17
-        }
-        
-        def get_exchange_rate(currency):
-            """
-            Returns the exchange rate for a given currency. Defaults to 1 if currency is not found.
-            """
-            return self.exchange_rates.get(currency, 1)
-
         # Define transformation rules by category
         return {
             "data_cleaning": {
@@ -134,17 +122,25 @@ class RuleManagerTransform(MapFunction):
             # Generate a generic identifier (hash of the input data)
             input_id = hash(json.dumps(input_data, sort_keys=True))
 
-            for category, rules in self.selected_rules.items():
-                for rule_name in rules:
-                    if category in self.rules_registry and rule_name in self.rules_registry[category]:
-                        transformation_func = self.rules_registry[category][rule_name]
-                        
-                        # Apply transformation dynamically to all fields
-                        transformed_data = transformation_func(output_data)
+            for category, transformations in self.selected_rules.items():
+                if category in self.rules_registry:
+                    for rule_name, columns in transformations.items() if isinstance(transformations, dict) else [(rule, None) for rule in transformations]:
+                        if rule_name in self.rules_registry[category]:
+                            transformation_func = self.rules_registry[category][rule_name]
 
-                        if transformed_data is not None:
-                            output_data.update(transformed_data)
-                            applied_rules.append(f"{category}.{rule_name}")
+                            # Apply transformation based on column specification
+                            if isinstance(columns, list):  # Apply to specific columns
+                                for col in columns:
+                                    if col in output_data:
+                                        transformed = transformation_func({col: output_data[col]})
+                                        if isinstance(transformed, dict):  # Ensure we update safely
+                                            output_data.update(transformed)
+                                            applied_rules.append(f"{category}.{rule_name} ({col})")
+                            else:  # Apply transformation to the full dataset
+                                transformed_data = transformation_func(output_data.copy())  # Work on a copy to avoid mutation issues
+                                if isinstance(transformed_data, dict):
+                                    output_data.update(transformed_data)
+                                    applied_rules.append(f"{category}.{rule_name}")
 
             if applied_rules:
                 self.log_applied_rules(input_id, applied_rules)
