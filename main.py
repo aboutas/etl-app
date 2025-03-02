@@ -11,9 +11,6 @@ with open('/opt/flink/app/input.json', 'r') as f:
 with open('/opt/flink/app/selected_rules.json', 'r') as f:
     selected_rules = json.load(f)
 
-    if not isinstance(selected_rules, dict):
-        raise ValueError("Error: selected_rules.json should be a dictionary.")
-
 rule_manager_transform = transform_rules_manager.RuleManagerTransform(
     schema_manager.schema_registry, selected_rules
 )

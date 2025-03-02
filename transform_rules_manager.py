@@ -14,12 +14,20 @@ class RuleManagerTransform(MapFunction):
     """
 
     LOG_FILE = "/opt/flink/output/log.txt"  # Define log file location
-    RULES_FILE = "/opt/flink/app/selected_rules.json"
+    
 
-    def __init__(self, schema_manager, selected_rules=None):
+    def __init__(self, schema_manager, selected_rules):
         self.schema_manager = schema_manager
         self.rules_registry = self.initalize_rules()  
-        self.selected_rules = selected_rules or self.load_selected_rules()
+        
+    def load_selected_rules(self):
+        """Loads selected transformation rules from a JSON file."""
+        try:
+            with open("/opt/flink/app/selected_rules.json", 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Error loading rules: {e}")
+            return {}
        
     def initalize_rules(self):
         # Exchange rates dictionary
@@ -72,24 +80,7 @@ class RuleManagerTransform(MapFunction):
             }
         }       
 
-    def load_selected_rules(self):
-        """
-        Reads user-selected transformation rules from a JSON file.
-        Ensures the format is a dictionary.
-        """
-        try:
-            with open(self.RULES_FILE, 'r') as f:
-                rules = json.load(f)
-                
-                if not isinstance(rules, dict):
-                    raise ValueError("Invalid rules format. Expected a dictionary.")
-                
-                return rules
-        except Exception as e:
-            print(f"Error loading rules: {e}")
-        return {}
-
-
+   
     def log_applied_rules(self, input_id, applied_rules):
         """
         Logs the applied rules into a file.

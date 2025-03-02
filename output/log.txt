@@ -1,4 +1,4 @@
-ID: 1 | Applied Rules: anonymization.data_masking
 ID: 2 | Applied Rules: anonymization.data_masking
-ID: 3 | Applied Rules: anonymization.data_masking
 ID: 4 | Applied Rules: anonymization.data_masking
+ID: 3 | Applied Rules: anonymization.data_masking
+ID: 1 | Applied Rules: anonymization.data_masking
