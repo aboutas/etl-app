@@ -23,6 +23,7 @@ COPY schema_manager.py .
 COPY transform_rules_manager.py .
 
 COPY input.json /opt/flink/app/input.json
+COPY selected_rules.json /opt/flink/app/selected_rules.json
 
 RUN mkdir -p /opt/flink/output
 

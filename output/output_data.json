@@ -1,4 +1,4 @@
-{"customer_id": 4, "cost": 500, "name": "Thanasis", "last_name": "Boutas", "consumption": 250, "street": "Papaflessa 83", "city": "Athens", "total_cost": 0, "customerID": 4, "totalCost": 500, "cost_in_dollars": 425.0, "normalized_cost": 0.5, "full_address": "Papaflessa 83, Athens", "extracted_digits": [], "masked_id": "XXXX-4", "token": 4}
-{"customer_id": 1, "cost": 150, "total_cost": 0, "customerID": 1, "totalCost": 150, "cost_in_dollars": 127.5, "normalized_cost": 0.15, "full_address": ", ", "extracted_digits": [], "masked_id": "XXXX-1", "token": 1}
-{"customer_id": 3, "cost": 300, "name": "Bob", "last_name": "Smith", "consumption": 100, "total_cost": 0, "customerID": 3, "totalCost": 300, "cost_in_dollars": 255.0, "normalized_cost": 0.3, "full_address": ", ", "extracted_digits": [], "masked_id": "XXXX-3", "token": 3}
-{"customer_id": 2, "cost": 200, "name": "Alice", "last_name": "Cooper", "total_cost": 0, "customerID": 2, "totalCost": 200, "cost_in_dollars": 170.0, "normalized_cost": 0.2, "full_address": ", ", "extracted_digits": [], "masked_id": "XXXX-2", "token": 2}
+{"masked_id": "XXXX-1"}
+{"masked_id": "XXXX-2"}
+{"masked_id": "XXXX-3"}
+{"masked_id": "XXXX-4"}

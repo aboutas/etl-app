@@ -1,7 +1,6 @@
+import json
+import re
 from pyflink.datastream.functions import MapFunction
-import json, re
-
-
 from schema_manager import SchemaManager  # Import SchemaManager correctly
 
 
@@ -15,10 +14,14 @@ class RuleManagerTransform(MapFunction):
     """
 
     LOG_FILE = "/opt/flink/output/log.txt"  # Define log file location
+    RULES_FILE = "/opt/flink/app/selected_rules.json"
 
-    def __init__(self, schema_manager, rules_registry=None):
+    def __init__(self, schema_manager, selected_rules=None):
         self.schema_manager = schema_manager
-
+        self.rules_registry = self.initalize_rules()  
+        self.selected_rules = selected_rules or self.load_selected_rules()
+       
+    def initalize_rules(self):
         # Exchange rates dictionary
         self.exchange_rates = {
             'USD': 0.85,
@@ -32,7 +35,7 @@ class RuleManagerTransform(MapFunction):
             return self.exchange_rates.get(currency, 1)
 
         # Define transformation rules by category
-        self.rules_registry = rules_registry or {
+        return {
             "data_cleaning": {
                 "standardize_format": lambda data: {k.lower().strip(): v for k, v in data.items()},
             },
@@ -67,9 +70,25 @@ class RuleManagerTransform(MapFunction):
                 "data_masking": lambda data: {"masked_id": f"XXXX-{str(data.get('customer_id', ''))[-4:]}"},
                 "tokenization": lambda data: {"token": hash(data.get("customer_id", ""))},
             }
-        }
-        self.schema_manager = schema_manager
-      
+        }       
+
+    def load_selected_rules(self):
+        """
+        Reads user-selected transformation rules from a JSON file.
+        Ensures the format is a dictionary.
+        """
+        try:
+            with open(self.RULES_FILE, 'r') as f:
+                rules = json.load(f)
+                
+                if not isinstance(rules, dict):
+                    raise ValueError("Invalid rules format. Expected a dictionary.")
+                
+                return rules
+        except Exception as e:
+            print(f"Error loading rules: {e}")
+        return {}
+
 
     def log_applied_rules(self, input_id, applied_rules):
         """
@@ -100,16 +119,15 @@ class RuleManagerTransform(MapFunction):
             input_data = json.loads(value)
             output_data = {}
             applied_rules = []
-            input_id = input_data.get("customer_id", "unknown")  # Use customer_id or set "unknown"
+            input_id = input_data.get("customer_id", "unknown")
 
-            for category, rules in self.rules_registry.items():
-                for rule_name, rule_function in rules.items():
-                    transformed = rule_function(input_data)
-                    if transformed is not None:
-                        output_data.update(transformed)  # Merge transformed data
-                        applied_rules.append(f"{category}.{rule_name}")  # Track applied rules
-
-            # Log the applied rules separately
+            for category, rules in self.selected_rules.items():
+                for rule_name in rules:
+                    if category in self.rules_registry and rule_name in self.rules_registry[category]:
+                        transformed = self.rules_registry[category][rule_name](input_data)
+                        if transformed is not None:
+                            output_data.update(transformed)
+                            applied_rules.append(f"{category}.{rule_name}")
             if applied_rules:
                 self.log_applied_rules(input_id, applied_rules)
 
