@@ -1,11 +1,12 @@
 {
     "data_cleaning": ["standardize_format"],
     "data_aggregation": ["summarization"],
-    "data_filtering": ["row_filtering", "column_filtering"],
-    "data_standardization": ["renaming_columns", "standardizing_units", "capitalization_rules"],
-    "data_validation": ["range_checks"],
-    "data_transformation": ["type_conversion", "normalization", "denormalization"],
+    "data_standardization": ["capitalization_rules"],
     "text_manipulation": ["trimming", "regex_operations"],
     "time_transformations": ["date_extraction"],
-    "anonymization": ["data_masking", "tokenization"]
+    "anonymization": ["data_masking"]
   }
+
+
+
+  

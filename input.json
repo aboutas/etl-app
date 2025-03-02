@@ -2,6 +2,6 @@
     {"customer_id": 1, "cost": 150},
     {"customer_id": 2, "cost": 200, "name": "Alice", "last_name": "Cooper"},
     {"customer_id": 3, "cost": 300, "name": "Bob", "last_name": "Smith", "consumption": 100},
-    {"customer_id": 4, "cost": 500, "name": "Thanasis", "last_name": "Boutas", "consumption": 250 , "street": "Papaflessa 83" , "city" : "Athens"}
+    {"customer_id": 4, "cost": 500, "name": "Matias", "last_name": "Almeyda", "consumption": 250 , "street": "Papaflessa 83" , "city" : "Athens"}
 ]
 

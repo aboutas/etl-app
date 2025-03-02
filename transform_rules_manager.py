@@ -19,6 +19,7 @@ class RuleManagerTransform(MapFunction):
     def __init__(self, schema_manager, selected_rules):
         self.schema_manager = schema_manager
         self.rules_registry = self.initalize_rules()  
+        self.selected_rules = selected_rules  
         
     def load_selected_rules(self):
         """Loads selected transformation rules from a JSON file."""
@@ -45,39 +46,59 @@ class RuleManagerTransform(MapFunction):
         # Define transformation rules by category
         return {
             "data_cleaning": {
-                "standardize_format": lambda data: {k.lower().strip(): v for k, v in data.items()},
+                "standardize_format": lambda data: {k.lower().strip(): v for k, v in data.items()}
             },
             "data_aggregation": {
-                "summarization": lambda data: {"total_sum": sum(v for v in data.values() if isinstance(v, (int, float)))},
+                "summarization": lambda data: {"total_sum": sum(v for v in data.values() if isinstance(v, (int, float)))}
             },
             "data_filtering": {
                 "row_filtering": lambda data: data if any(isinstance(v, (int, float)) and v > 100 for v in data.values()) else None,
-                "column_filtering": lambda data: {k: v for k, v in data.items() if isinstance(v, (int, str))},  
+                "column_filtering": lambda data: {k: v for k, v in data.items() if isinstance(v, (int, str))}
             },
             "data_standardization": {
-                "renaming_columns": lambda data, rename_map={"old_name": "new_name"}: {rename_map.get(k, k): v for k, v in data.items()},
-                "capitalization_rules": lambda data: {k: v.upper() if isinstance(v, str) else v for k, v in data.items()},
+                "renaming_columns": lambda data, rename_map={}: {rename_map.get(k, k): v for k, v in data.items()},
+                "capitalization_rules": lambda data: {k: v.upper() if isinstance(v, str) else v for k, v in data.items()}
             },
             "data_validation": {
-                "range_checks": lambda data: {k: v for k, v in data.items() if isinstance(v, (int, float)) and 0 <= v <= 10000},
+                "range_checks": lambda data: {k: v for k, v in data.items() if isinstance(v, (int, float)) and 0 <= v <= 10000}
             },
             "data_transformation": {
-                "type_conversion": lambda data: {k: (float(v) if isinstance(v, str) and v.replace('.', '', 1).isdigit() else v) for k, v in data.items()},
-                "normalization": lambda data: {k: v / max(data.values()) if isinstance(v, (int, float)) else v for k, v in data.items()},
-                "denormalization": lambda data: {**data, "full_address": ", ".join(filter(None, [data.get(k, "") for k in ["street", "city"]]))},
+                "type_conversion": lambda data: {
+                    k: float(v) if isinstance(v, str) and v.replace('.', '', 1).isdigit() else v
+                    for k, v in data.items()
+                },
+                "normalization": lambda data: {
+                    k: v / max(1, max(data.values())) if isinstance(v, (int, float)) else v  # Avoid division by zero
+                    for k, v in data.items()
+                },
+                "denormalization": lambda data: {
+                    **data,
+                    "full_address": ", ".join(filter(None, [data.get("street", ""), data.get("city", "")]))
+                }
             },
             "text_manipulation": {
                 "trimming": lambda data: {k: v.strip() if isinstance(v, str) else v for k, v in data.items()},
-                "regex_operations": lambda data: {k: re.findall(r'\d+', str(v)) if isinstance(v, str) else v for k, v in data.items()},
+                "regex_operations": lambda data: {
+                    f"{k}_digits": re.findall(r'\d+', v) if isinstance(v, str) else v for k, v in data.items()
+                }
             },
             "time_transformations": {
-                "date_extraction": lambda data: {k + "_year": v[:4] for k, v in data.items() if isinstance(v, str) and re.match(r"\d{4}-\d{2}-\d{2}", v)},
+                "date_extraction": lambda data: {
+                    f"{k}_year": v[:4] for k, v in data.items()
+                    if isinstance(v, str) and re.match(r"\d{4}-\d{2}-\d{2}", v)
+                }
             },
             "anonymization": {
-                "data_masking": lambda data: {k: f"XXXX-{str(v)[-4:]}" if isinstance(v, str) and len(v) > 4 else v for k, v in data.items()},
-                "tokenization": lambda data: {k: hash(v) if isinstance(v, (str, int)) else v for k, v in data.items()},
+                "data_masking": lambda data: {
+                    k: f"XXXX-{str(v)[-4:]}" if "id" in k.lower() and isinstance(v, (str, int)) else v
+                    for k, v in data.items()
+                },
+                "tokenization": lambda data: {
+                    k: hash(v) if isinstance(v, (str, int)) else v for k, v in data.items()
+                }
             }
         }
+
 
    
     def log_applied_rules(self, input_id, applied_rules):
@@ -107,21 +128,29 @@ class RuleManagerTransform(MapFunction):
         """
         try:
             input_data = json.loads(value)
-            output_data = {}
+            output_data = input_data.copy()  # Preserve original structure
             applied_rules = []
-            input_id = input_data.get("customer_id", "unknown")
+            
+            # Generate a generic identifier (hash of the input data)
+            input_id = hash(json.dumps(input_data, sort_keys=True))
 
             for category, rules in self.selected_rules.items():
                 for rule_name in rules:
                     if category in self.rules_registry and rule_name in self.rules_registry[category]:
-                        transformed = self.rules_registry[category][rule_name](input_data)
-                        if transformed is not None:
-                            output_data.update(transformed)
+                        transformation_func = self.rules_registry[category][rule_name]
+                        
+                        # Apply transformation dynamically to all fields
+                        transformed_data = transformation_func(output_data)
+
+                        if transformed_data is not None:
+                            output_data.update(transformed_data)
                             applied_rules.append(f"{category}.{rule_name}")
+
             if applied_rules:
                 self.log_applied_rules(input_id, applied_rules)
 
             return json.dumps(output_data)
+
         except Exception as e:
             error_message = f"Error processing record: {e}"
             self.log_applied_rules("ERROR", [error_message])

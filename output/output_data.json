@@ -1,0 +1,4 @@
+{"customer_id": "XXXX-1", "cost": 150, "total_sum": 151, "customer_id_digits": "XXXX-1", "cost_digits": 150, "total_sum_digits": 151}
+{"customer_id": "XXXX-4", "cost": 500, "name": "MATIAS", "last_name": "ALMEYDA", "consumption": 250, "street": "PAPAFLESSA 83", "city": "ATHENS", "total_sum": 754, "customer_id_digits": "XXXX-4", "cost_digits": 500, "name_digits": [], "last_name_digits": [], "consumption_digits": 250, "street_digits": ["83"], "city_digits": [], "total_sum_digits": 754}
+{"customer_id": "XXXX-2", "cost": 200, "name": "ALICE", "last_name": "COOPER", "total_sum": 202, "customer_id_digits": "XXXX-2", "cost_digits": 200, "name_digits": [], "last_name_digits": [], "total_sum_digits": 202}
+{"customer_id": "XXXX-3", "cost": 300, "name": "BOB", "last_name": "SMITH", "consumption": 100, "total_sum": 403, "customer_id_digits": "XXXX-3", "cost_digits": 300, "name_digits": [], "last_name_digits": [], "consumption_digits": 100, "total_sum_digits": 403}
