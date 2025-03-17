@@ -15,7 +15,6 @@ class RuleManagerTransform(MapFunction):
 
     LOG_FILE = "/opt/flink/output/log.txt"  # Define log file location
     
-
     def __init__(self, schema_manager, selected_rules):
         self.schema_manager = schema_manager
         self.rules_registry = self.initalize_rules()  
