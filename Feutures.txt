@@ -1,0 +1,31 @@
+Got it! Now we have the full picture. Here's what our **Flink ETL pipeline** is doing:  
+
+### **Pipeline Flow**  
+1. **Batch JSON Input** → Reads data from `/opt/flink/app/input.json`.  
+2. **Schema Management** → Uses `SchemaManager` to handle evolving schemas dynamically.  
+3. **Rule-Based Transformations** → `RuleManagerTransform` applies dynamic rules to clean, filter, transform, and validate data.  
+4. **Output Processing** → Writes the transformed data to `/opt/flink/output/output_data.json`.  
+5. **Logging** → Keeps track of applied transformation rules for traceability.  
+
+### **What’s Next?**  
+- **Streaming Support?** Move from batch JSON processing to a real-time Flink **Kafka source**?  
+- **More Dynamic Rules?** Load rules dynamically from `rules.json` instead of hardcoding them?  
+- **Schema Evolution Handling?** Auto-update schemas instead of manually registering them?  
+- **Performance Optimization?** Parallel execution, state management, or checkpointing?  
+
+What’s our next move? 🚀
+
+
+
+
+
+
+
+    "data_aggregation": ["summarization"],
+    "data_filtering": ["row_filtering", "column_filtering"],
+    "data_standardization": ["renaming_columns", "standardizing_units", "capitalization_rules"],
+    "data_validation": ["range_checks"],
+    "data_transformation": ["type_conversion", "normalization", "denormalization"],
+    "text_manipulation": ["trimming", "regex_operations"],
+    "time_transformations": ["date_extraction"],
+    "anonymization": ["data_masking", "tokenization"]
