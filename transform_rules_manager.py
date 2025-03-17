@@ -86,8 +86,6 @@ class RuleManagerTransform(MapFunction):
                 }
             }
         }
-
-
    
     def log_applied_rules(self, input_id, applied_rules):
         """
