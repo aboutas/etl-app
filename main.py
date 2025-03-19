@@ -1,7 +1,7 @@
 from pyflink.datastream import StreamExecutionEnvironment
 import json
-import schema_manager
-import transform_rules_manager    
+import schema_handler
+import rule_manager    
 
 env = StreamExecutionEnvironment.get_execution_environment()
 
@@ -11,8 +11,8 @@ with open('/opt/flink/app/input.json', 'r') as f:
 with open('/opt/flink/app/selected_rules.json', 'r') as f:
     selected_rules = json.load(f)
 
-rule_manager_transform = transform_rules_manager.RuleManagerTransform(
-    schema_manager.schema_registry, selected_rules
+rule_manager_transform = rule_manager.RuleManagerTransform(
+    schema_handler.schema_registry, selected_rules
 )
 
 data_stream = env.from_collection([json.dumps(item) for item in json_inputs])

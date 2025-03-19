@@ -1,4 +1,4 @@
-ID: -7608735077132061564 | Applied Rules: data_aggregation.summarization (cost), anonymization.data_masking (customer_id)
-ID: 8487976674959636063 | Applied Rules: data_cleaning.standardize_format (name), data_cleaning.standardize_format (street), data_aggregation.summarization (cost), data_aggregation.summarization (consumption), anonymization.data_masking (customer_id)
-ID: -3394220886213956737 | Applied Rules: data_cleaning.standardize_format (name), data_aggregation.summarization (cost), anonymization.data_masking (customer_id)
-ID: -8403059425158425428 | Applied Rules: data_cleaning.standardize_format (name), data_aggregation.summarization (cost), data_aggregation.summarization (consumption), anonymization.data_masking (customer_id)
+ID: 3 | Applied Rules: ID: 3 | Applied Rules: data_cleaning.standardize_format (name) | data_cleaning.standardize_format - Missing: street
+ID: 4 | Applied Rules: ID: 4 | Applied Rules: data_cleaning.standardize_format (name, street)
+ID: 2 | Applied Rules: ID: 2 | Applied Rules: data_cleaning.standardize_format (name) | data_cleaning.standardize_format - Missing: street
+ID: 1 | Applied Rules: ID: 1 | Applied Rules: None | data_cleaning.standardize_format - Missing: name, street

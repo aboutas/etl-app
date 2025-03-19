@@ -1,12 +1,6 @@
 {
   "data_cleaning": {
     "standardize_format": ["name", "street"]
-  },
-  "data_aggregation": {
-    "summarization": ["cost", "consumption"]
-  },
-  "anonymization": {
-    "data_masking": ["customer_id"]
   }
 }
 
