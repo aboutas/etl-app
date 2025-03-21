@@ -43,15 +43,6 @@ class RuleManagerTransform(MapFunction):
             }
         }
    
-    # def log_applied_rules(self, input_id, applied_rules):
-    #     try:
-    #         log_entry = f"ID: {input_id} | Applied Rules: {', '.join(applied_rules)}"
-    #         print(log_entry)  # ✅ TEMP FIX: Log to console instead of file
-    #         # with open(self.LOG_FILE, "a") as log_file:
-    #         #     log_file.write(log_entry + "\n")  # ❌ Comment out file logging for now
-    #     except Exception as e:
-    #         print(f"Error writing to log: {e}")  # Print instead of failing
-
     def log_applied_rules(self, input_id, applied_rules):
         """
         Logs the applied rules into a file.
@@ -69,6 +60,9 @@ class RuleManagerTransform(MapFunction):
 
     def map(self, value):
         try:
+            start_time = time.time()
+            transformation_times = []
+
             input_data = json.loads(value)
             output_data = input_data.copy()
             applied_rules = []
@@ -83,10 +77,16 @@ class RuleManagerTransform(MapFunction):
 
                             valid_fields = [field for field in fields if field in output_data]
                             if valid_fields:
+                                t_start = time.time()
                                 transformed_data, _ = transformation_func(output_data, valid_fields)
+                                t_end = time.time()
+
+                                time_taken = t_end - t_start
+                                transformation_times.append(f"{rule_name}: {time_taken:.4f} sec")  # Store execution time
+
                                 output_data.update(transformed_data)
                                 applied_rules.append(f"{category}.{rule_name} ({', '.join(valid_fields)})")
-
+                                
             # Apply filtering LAST
             for category, transformations in self.selected_rules.items():
                 if category == "data_filtering":
@@ -97,16 +97,18 @@ class RuleManagerTransform(MapFunction):
 
                             if rule_filtered_out:
                                 applied_rules.append(f"{category}.{rule_name} - FILTERED OUT")
-                                self.log_applied_rules(input_id, applied_rules)  # ✅ LOGGING FIXED
+                                self.log_applied_rules(input_id, applied_rules)  
                                 return json.dumps({"customer_id": input_id, "filtered_out": True})
 
-            # ✅ Always log something
+            
             self.log_applied_rules(input_id, applied_rules or ["None"])  
-
+            end_time = time.time()
+            print(f"Total map() execution time: {end_time - start_time:.4f} sec") 
+             
             return json.dumps(output_data)
 
         except Exception as e:
             error_message = f"Error processing record: {e}"
-            self.log_applied_rules("ERROR", [error_message])  # ✅ LOGGING FIXED
+            self.log_applied_rules("ERROR", [error_message])  
 
             return json.dumps({"error": str(e), "customer_id": "UNKNOWN"})

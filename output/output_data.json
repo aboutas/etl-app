@@ -1,4 +1,0 @@
-{"customer_id": 2, "cost": 200, "name": "alice", "last_name": "Cooper"}
-{"customer_id": 4, "cost": 500, "name": "matias", "last_name": "Almeyda", "consumption": 250, "street": "papaflessa 83", "city": "Athens"}
-{"customer_id": 1, "cost": 150}
-{"customer_id": 3, "cost": 300, "name": "bob", "last_name": "Smith", "consumption": 100}
