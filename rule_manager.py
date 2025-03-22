@@ -58,6 +58,16 @@ class RuleManagerTransform(MapFunction):
         except Exception as e:
             print(f"Error writing to log file: {e}")
 
+    def extract_id(input_data):
+        # Find all keys that contain "id" (case insensitive)
+        id_keys = [key for key in input_data.keys() if "id" in key.lower()]
+        
+        # Pick the shortest match (e.g., "id" over "customer_id")
+        selected_key = min(id_keys, key=len) if id_keys else None
+
+        # Get the ID or fall back to a hash
+        return input_data.get(selected_key, hash(json.dumps(input_data, sort_keys=True)))
+
     def map(self, value):
         try:
             start_time = time.time()
@@ -67,7 +77,7 @@ class RuleManagerTransform(MapFunction):
             output_data = input_data.copy()
             applied_rules = []
 
-            input_id = input_data.get("customer_id", hash(json.dumps(input_data, sort_keys=True)))
+            input_id = self.extract_id(input_data)
 
             for category, transformations in self.selected_rules.items():
                 if category in self.rules_registry:
@@ -99,7 +109,6 @@ class RuleManagerTransform(MapFunction):
                                 applied_rules.append(f"{category}.{rule_name} - FILTERED OUT")
                                 self.log_applied_rules(input_id, applied_rules)  
                                 return json.dumps({"customer_id": input_id, "filtered_out": True})
-
             
             self.log_applied_rules(input_id, applied_rules or ["None"])  
             end_time = time.time()
