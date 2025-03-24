@@ -2,7 +2,10 @@
   "data_cleaning": {
     "standardize_format": ["name", "street"]
   },
-  "data_filtering": {
-    "row_filtering": ["consumption"]
+  "data_transformation": {
+    "type_conversion": ["cost"]
+  },
+  "anonymization": {
+    "tokenization": ["city"]
   }  
 }

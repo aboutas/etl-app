@@ -40,6 +40,12 @@ class RuleManagerTransform(MapFunction):
             "data_filtering": {
                 "row_filtering": row_filtering,
                 "column_filtering": column_filtering
+            },
+            "data_transformation": {
+                "type_conversion": type_conversion
+            },
+            "anonymization": {
+                "tokenization": tokenization
             }
         }
    
@@ -58,15 +64,16 @@ class RuleManagerTransform(MapFunction):
         except Exception as e:
             print(f"Error writing to log file: {e}")
 
-    def extract_id(input_data):
-        # Find all keys that contain "id" (case insensitive)
+    def extract_id(self, input_data):
         id_keys = [key for key in input_data.keys() if "id" in key.lower()]
-        
-        # Pick the shortest match (e.g., "id" over "customer_id")
         selected_key = min(id_keys, key=len) if id_keys else None
 
-        # Get the ID or fall back to a hash
-        return input_data.get(selected_key, hash(json.dumps(input_data, sort_keys=True)))
+        # If we find an ID key, return it and its value
+        if selected_key and selected_key in input_data:
+            return selected_key, input_data[selected_key]
+
+        # If no ID key is found, return a generic key with a hash as the value
+        return "id", hash(json.dumps(input_data, sort_keys=True))
 
     def map(self, value):
         try:
@@ -77,7 +84,11 @@ class RuleManagerTransform(MapFunction):
             output_data = input_data.copy()
             applied_rules = []
 
-            input_id = self.extract_id(input_data)
+            result = self.extract_id(input_data)
+            print(f"Extract ID result: {result}")
+            if not isinstance(result, tuple) or len(result) != 2:
+                raise ValueError(f"Unexpected return from extract_id: {result}") 
+            id_key, input_id = result
 
             for category, transformations in self.selected_rules.items():
                 if category in self.rules_registry:
@@ -98,17 +109,17 @@ class RuleManagerTransform(MapFunction):
                                 applied_rules.append(f"{category}.{rule_name} ({', '.join(valid_fields)})")
                                 
             # Apply filtering LAST
-            for category, transformations in self.selected_rules.items():
-                if category == "data_filtering":
-                    for rule_name, fields in transformations.items():
-                        if rule_name in self.rules_registry[category]:
-                            filtering_func = self.rules_registry[category][rule_name]
-                            _, rule_filtered_out = filtering_func(output_data, fields)
+            # for category, transformations in self.selected_rules.items():
+            #     if category == "data_filtering":
+            #         for rule_name, fields in transformations.items():
+            #             if rule_name in self.rules_registry[category]:
+            #                 filtering_func = self.rules_registry[category][rule_name]
+            #                 _, rule_filtered_out = filtering_func(output_data, fields)
 
-                            if rule_filtered_out:
-                                applied_rules.append(f"{category}.{rule_name} - FILTERED OUT")
-                                self.log_applied_rules(input_id, applied_rules)  
-                                return json.dumps({"customer_id": input_id, "filtered_out": True})
+            #                 if rule_filtered_out:
+            #                     applied_rules.append(f"{category}.{rule_name} - FILTERED OUT")
+            #                     self.log_applied_rules(input_id, applied_rules)  
+            #                     return json.dumps({"customer_id": input_id, "filtered_out": True})
             
             self.log_applied_rules(input_id, applied_rules or ["None"])  
             end_time = time.time()
@@ -120,4 +131,4 @@ class RuleManagerTransform(MapFunction):
             error_message = f"Error processing record: {e}"
             self.log_applied_rules("ERROR", [error_message])  
 
-            return json.dumps({"error": str(e), "customer_id": "UNKNOWN"})
+            return json.dumps({"error": str(e), id_key if id_key else "id": "UNKNOWN"})
