@@ -1,4 +1,4 @@
-class SchemaManager:
+class SchemaHandler:
     """
     A class to manage and retrieve schemas dynamically for different data sources.
 
@@ -78,7 +78,7 @@ class SchemaManager:
         return self.schemas[latest_version]
 
 #Mock schema registry and register dynamic schemas 
-schema_registry = SchemaManager()
+schema_registry = SchemaHandler()
 schema_registry.register_schema('input_json', 1, {'fields': ['customer id', 'cost']})
 schema_registry.register_schema('input_json', 2, {'fields': ['customer id', 'cost', 'consumption', 'name']})
 schema_registry.register_schema('input_json', 3, {'fields': ['customer id', 'cost', 'consumption', 'last_name', 'extra_column']})
