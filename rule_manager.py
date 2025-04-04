@@ -108,18 +108,6 @@ class RuleManagerTransform(MapFunction):
                                 output_data.update(transformed_data)
                                 applied_rules.append(f"{category}.{rule_name} ({', '.join(valid_fields)})")
                                 
-            # Apply filtering LAST
-            # for category, transformations in self.selected_rules.items():
-            #     if category == "data_filtering":
-            #         for rule_name, fields in transformations.items():
-            #             if rule_name in self.rules_registry[category]:
-            #                 filtering_func = self.rules_registry[category][rule_name]
-            #                 _, rule_filtered_out = filtering_func(output_data, fields)
-
-            #                 if rule_filtered_out:
-            #                     applied_rules.append(f"{category}.{rule_name} - FILTERED OUT")
-            #                     self.log_applied_rules(input_id, applied_rules)  
-            #                     return json.dumps({"customer_id": input_id, "filtered_out": True})
             
             self.log_applied_rules(input_id, applied_rules or ["None"])  
             end_time = time.time()
