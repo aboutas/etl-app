@@ -1,0 +1,6 @@
+{
+    "verbosity": 0,
+    "input_data_path": "input.json",
+    "save_path": "/opt/flink/output/output_data.json",
+    "applied_rules_path": "/opt/flink/app/selected_rules.json" 
+}

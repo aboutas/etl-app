@@ -18,10 +18,9 @@ RUN pip install apache-flink==1.17.0
 # Set the working directory inside the container
 WORKDIR /opt/flink/app
 
-COPY main.py .
+COPY tranformations .
 COPY schema_handler.py	 .
 COPY rule_manager.py .
-COPY tranformations.py .
 
 COPY input.json /opt/flink/app/input.json
 COPY selected_rules.json /opt/flink/app/selected_rules.json

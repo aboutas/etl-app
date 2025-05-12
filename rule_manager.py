@@ -1,55 +1,64 @@
-import json
-import uuid 
 from pyflink.datastream.functions import MapFunction
-from schema_handler import SchemaHandler  
-from tranformations import *
-import time
+from transformations import Transformations
+import json, time
 
 
 class RuleManagerTransform(MapFunction):
     """
-    A MapFunction that dynamically transforms input data based on rules and schema versions.
-
-    Attributes:
-        schema_manager (SchemaManager): An instance of SchemaManager to retrieve schemas.
-        rules_registry (dict): Dictionary of transformation rules categorized by type.
+    A MapFunction that dynamically transforms input data based on user-defined rules and schema versions.
     """
-
-    LOG_FILE = "/opt/flink/output/log.txt"  
     
-    def __init__(self, schema_manager, selected_rules):
+    LOG_FILE = "/opt/flink/output/log.txt"  # Define log file location
+    
+    def __init__(self, schema_manager, selected_rules, verbose: int = 0):
         self.schema_manager = schema_manager
-        self.rules_registry = self.initalize_rules()  
+        self.rules_registry = self.initialize_rules()  
         self.selected_rules = selected_rules  
+        self.verbose = verbose
+    
+    def log(self, message: str) -> None:
+        """
+        Logs a message to the console, depending on the verbosity level.
         
-    def load_selected_rules(self):
-        """Loads selected transformation rules from a JSON file."""
-        try:
-            with open("/opt/flink/app/selected_rules.json", 'r') as f:
-                return json.load(f)
-        except Exception as e:
-            print(f"Error loading rules: {e}")
-            return {}
-       
-    def initalize_rules(self):
-        # Define transformation rules by category
+        Args:
+            message (str): The message to log.
+        """
+        if self.verbose == 1:
+            print(message)
+
+    def initialize_rules(self):
         return {
             "data_cleaning": {
-                "standardize_format": standardize_format
+                "standardize_format": Transformations.standardize_format
             },
-            "data_filtering": {
-                "row_filtering": row_filtering,
-                "column_filtering": column_filtering
+            "data_aggregation": {
+                "summarization": Transformations.summarization
+            },
+            "data_standardization": {
+                "renaming_columns": Transformations.renaming_columns,
+                "capitalization_rules": Transformations.capitalization_rules
+            },
+            "data_validation": {
+                "range_checks": Transformations.range_checks
             },
             "data_transformation": {
-                "type_conversion": type_conversion
+                "type_conversion": Transformations.type_conversion,
+                "normalization": Transformations.normalization,
+                "denormalization": Transformations.denormalization
+            },
+            "text_manipulation": {
+                "trimming": Transformations.trimming,
+                "regex_operations": Transformations.regex_operations
+            },
+            "time_transformations": {
+                "date_extraction": Transformations.date_extraction
             },
             "anonymization": {
-                "tokenization": tokenization
+                "data_masking": Transformations.data_masking
             }
         }
-   
-    def log_applied_rules(self, input_id, applied_rules):
+    
+    def logging_rules(self, input_id, applied_rules):
         """
         Logs the applied rules into a file.
 
@@ -57,12 +66,13 @@ class RuleManagerTransform(MapFunction):
             input_id (str): Unique identifier from input data.
             applied_rules (list): List of applied transformation rules.
         """
-        try:
-            with open(self.LOG_FILE, "a") as log_file:
-                log_entry = f"ID: {input_id} | Applied Rules: {', '.join(applied_rules)}\n"
-                log_file.write(log_entry)
-        except Exception as e:
-            print(f"Error writing to log file: {e}")
+        if self.verbose == 1:
+            try:
+                with open(self.LOG_FILE, "a") as log_file:
+                    log_entry = f"Id: {input_id} | Applied Rules: {', '.join(applied_rules)}\n"
+                    log_file.write(log_entry)
+            except Exception as e:
+                print(f"Error writing to log file: {e}")
 
     def extract_id(self, input_data):
         id_keys = [key for key in input_data.keys() if "id" in key.lower()]
@@ -121,7 +131,7 @@ class RuleManagerTransform(MapFunction):
             #                     self.log_applied_rules(input_id, applied_rules)  
             #                     return json.dumps({"customer_id": input_id, "filtered_out": True})
             
-            self.log_applied_rules(input_id, applied_rules or ["None"])  
+            self.logging_rules(input_id, applied_rules or ["None"])  
             end_time = time.time()
             print(f"Total map() execution time: {end_time - start_time:.4f} sec") 
              
@@ -132,3 +142,4 @@ class RuleManagerTransform(MapFunction):
             self.log_applied_rules("ERROR", [error_message])  
 
             return json.dumps({"error": str(e), id_key if id_key else "id": "UNKNOWN"})
+
