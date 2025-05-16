@@ -117,6 +117,9 @@ class RuleManagerTransform(MapFunction):
                                 applied_rules.append(f"{category}.{rule_name} ({', '.join(valid_fields)})")
                                             
             self.logging_rules(input_id, applied_rules or ["None"])  
+                                
+            
+            
             end_time = time.time()
             print(f"Total map() execution time: {end_time - start_time:.4f} sec") 
              
