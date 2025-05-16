@@ -4,35 +4,7 @@ import schema_handler
 import logging
 import os
 import json
-
-
-def load_config(config_path: str = "config.json") -> dict:
-    """
-    Loads configuration settings from a JSON file.
-    
-    Parameters:
-        config_path (str): The file path to the configuration JSON file. Defaults to 'config.json'.
-    
-    Returns:
-        dict: The configuration settings loaded from the JSON file.
-    """
-    with open(config_path, "r") as config_file:
-        return json.load(config_file)
-
-def ensure_directory_exists(path: str) -> None:
-    """
-    Ensures that the specified directory exists, creating it if necessary.
-    
-    Parameters:
-        path (str): The path to the directory to check and potentially create.
-    """
-    os.makedirs(path, exist_ok=True)
-
-def save_to_file(data, save_path: str) -> None:
-            """Writes the transformed JSON data to an output file."""
-            data = json.loads(data) 
-            with open(save_path, 'a') as file:
-                json.dump(data, save_path, indent=4)
+from file_helpers import ensure_directory_exists, load_config, save_to_file
 
 # Configure basic logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -47,7 +19,7 @@ if __name__ == "__main__":
         applied_rules_path = config["applied_rules_path"]
         
         # Ensure the directory where parsed data will be saved exists
-        ensure_directory_exists(save_path)
+        ensure_directory_exists(os.path.dirname(save_path))
         # Load the configuration settings from a file
         env = StreamExecutionEnvironment.get_execution_environment()
 
@@ -57,14 +29,12 @@ if __name__ == "__main__":
         with open(applied_rules_path, 'r') as file:
             selected_rules = json.load(file)
 
-        rule_manager_transform = RuleManagerTransform(
-            schema_handler.schema_registry, selected_rules , verbosity
-        )
+        rule_manager_transform = RuleManagerTransform(schema_handler.schema_registry, selected_rules , verbosity)
 
         data_stream = env.from_collection([json.dumps(item) for item in json_inputs])
         transformed_stream = data_stream.map(rule_manager_transform)
 
-        transformed_stream.map(save_to_file(save_path))
+        transformed_stream.map(lambda data: save_to_file(data, save_path))
 
         env.execute("Dynamic JSON to File with Flink")
         logging.info("Transforamtions completed saccesfully! The resulst has store in a json file.")

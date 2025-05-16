@@ -1,20 +1,22 @@
 from pyflink.datastream.functions import MapFunction
 from transformations import Transformations
-import json, time
-
-
+import json, time, os
+from file_helpers import ensure_directory_exists, load_config
+from pyflink.datastream.functions import MapFunction
 class RuleManagerTransform(MapFunction):
     """
     A MapFunction that dynamically transforms input data based on user-defined rules and schema versions.
     """
-    
-    LOG_FILE = "/opt/flink/output/log.txt"  # Define log file location
     
     def __init__(self, schema_manager, selected_rules, verbose: int = 0):
         self.schema_manager = schema_manager
         self.rules_registry = self.initialize_rules()  
         self.selected_rules = selected_rules  
         self.verbose = verbose
+
+        config = load_config()
+        self.log_file = config["log_file"]
+        ensure_directory_exists(os.path.dirname(self.log_file))
     
     def log(self, message: str) -> None:
         """
@@ -58,17 +60,14 @@ class RuleManagerTransform(MapFunction):
             }
         }
     
-    def logging_rules(self, input_id, applied_rules):
+    def logging_rules(self, input_id : int, applied_rules):
         """
         Logs the applied rules into a file.
 
-        Args:
-            input_id (str): Unique identifier from input data.
-            applied_rules (list): List of applied transformation rules.
         """
         if self.verbose == 1:
             try:
-                with open(self.LOG_FILE, "a") as log_file:
+                with open(self.log_file, "a") as log_file:
                     log_entry = f"Id: {input_id} | Applied Rules: {', '.join(applied_rules)}\n"
                     log_file.write(log_entry)
             except Exception as e:
@@ -105,7 +104,6 @@ class RuleManagerTransform(MapFunction):
                     for rule_name, fields in transformations.items():
                         if rule_name in self.rules_registry[category]:
                             transformation_func = self.rules_registry[category][rule_name]
-
                             valid_fields = [field for field in fields if field in output_data]
                             if valid_fields:
                                 t_start = time.time()
@@ -117,20 +115,7 @@ class RuleManagerTransform(MapFunction):
 
                                 output_data.update(transformed_data)
                                 applied_rules.append(f"{category}.{rule_name} ({', '.join(valid_fields)})")
-                                
-            # Apply filtering LAST
-            # for category, transformations in self.selected_rules.items():
-            #     if category == "data_filtering":
-            #         for rule_name, fields in transformations.items():
-            #             if rule_name in self.rules_registry[category]:
-            #                 filtering_func = self.rules_registry[category][rule_name]
-            #                 _, rule_filtered_out = filtering_func(output_data, fields)
-
-            #                 if rule_filtered_out:
-            #                     applied_rules.append(f"{category}.{rule_name} - FILTERED OUT")
-            #                     self.log_applied_rules(input_id, applied_rules)  
-            #                     return json.dumps({"customer_id": input_id, "filtered_out": True})
-            
+                                            
             self.logging_rules(input_id, applied_rules or ["None"])  
             end_time = time.time()
             print(f"Total map() execution time: {end_time - start_time:.4f} sec") 
@@ -139,7 +124,7 @@ class RuleManagerTransform(MapFunction):
 
         except Exception as e:
             error_message = f"Error processing record: {e}"
-            self.log_applied_rules("ERROR", [error_message])  
+            self.logging_rules("ERROR", [error_message])  
 
             return json.dumps({"error": str(e), id_key if id_key else "id": "UNKNOWN"})
 

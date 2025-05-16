@@ -1,20 +1,180 @@
-{"customer_id": 5, "cost": 495.6, "name": "lazaros", "last_name": "Rota", "consumption": 260, "street": "panepistimiou 100", "city": "Athens"}
-{"customer_id": 1, "cost": 450.0, "name": "cican", "last_name": "Stankovic", "consumption": 250, "street": "dekeleias 21", "city": "Athens"}
-{"customer_id": 4, "cost": 510.5, "name": "harold", "last_name": "Moukoudi", "consumption": 275, "street": "solomou 5", "city": "Athens"}
-{"customer_id": 2, "cost": 520.3, "name": "ehsan", "last_name": "Hajsafi", "consumption": 10, "street": "papaflessa 83", "city": "Athens"}
-{"customer_id": 7, "cost": 470.8, "name": "damian", "last_name": "Szymanski", "consumption": 65, "street": "patision 50", "city": "Athens"}
-{"customer_id": 3, "cost": 480.0, "name": "domagoj", "last_name": "Vida", "consumption": 290, "street": "kifisias 10", "city": "Athens"}
-{"customer_id": 13, "cost": 515.9, "name": "sergio", "last_name": "Araujo", "consumption": 90, "street": "stadiou 78", "city": "Athens"}
-{"customer_id": 6, "cost": 530.4, "name": "milad", "last_name": "Mohammadi", "consumption": 280, "street": "ermou 22", "city": "Athens"}
-{"customer_id": 8, "cost": 490.6, "name": "jens", "last_name": "Jonsson", "consumption": 95, "street": "mitropoleos 7", "city": "Athens"}
-{"customer_id": 12, "cost": 475.4, "name": "petros", "last_name": "Mantalos", "consumption": 315, "street": "akadimias 55", "city": "Athens"}
-{"customer_id": 9, "cost": 500.3, "name": "mijat", "last_name": "Gacinovic", "consumption": 285, "street": "athinas 45", "city": "Athens"}
-{"customer_id": 10, "cost": 505.5, "name": "orbelin", "last_name": "Pineda", "consumption": 270, "street": "omonia 33", "city": "Athens"}
-{"customer_id": 14, "cost": 525.2, "name": "ezequiel", "last_name": "Ponce", "consumption": 310, "street": "karaiskaki 3", "city": "Athens"}
-{"customer_id": 11, "cost": 485.2, "name": "steven", "last_name": "Zuber", "consumption": 300, "street": "vasilissis sofias 12", "city": "Athens"}
-{"customer_id": 15, "cost": 480.5, "name": "nordin", "last_name": "Amrabat", "consumption": 75, "street": "kountourioti 20", "city": "Athens"}
-{"customer_id": 16, "cost": 495.5, "name": "levi", "last_name": "Garcia", "consumption": 285, "street": "poseidonos 65", "city": "Athens"}
-{"customer_id": 17, "cost": 505.2, "name": "kostas", "last_name": "Galanopoulos", "consumption": 320, "street": "iera odos 90", "city": "Athens"}
-{"customer_id": 20, "cost": 475.1, "name": "petros", "last_name": "Mandalos", "consumption": 305, "street": "aiolou 15", "city": "Athens"}
-{"customer_id": 18, "cost": 490.4, "name": "zini", "last_name": "Zinedine", "consumption": 275, "street": "thiseos 99", "city": "Athens"}
-{"customer_id": 19, "cost": 510.4, "name": "mihalis", "last_name": "Bakakis", "consumption": 85, "street": "kifisias 120", "city": "Athens"}
+{
+    "customer_id": 6,
+    "cost": 530.4,
+    "name": "milad",
+    "last_name": "Mohammadi",
+    "consumption": 280,
+    "street": "ermou 22",
+    "city": "Athens"
+}
+{
+    "customer_id": 7,
+    "cost": 470.8,
+    "name": "damian",
+    "last_name": "Szymanski",
+    "consumption": 65,
+    "street": "patision 50",
+    "city": "Athens"
+}
+{
+    "customer_id": 2,
+    "cost": 520.3,
+    "name": "ehsan",
+    "last_name": "Hajsafi",
+    "consumption": 10,
+    "street": "papaflessa 83",
+    "city": "Athens"
+}
+{
+    "customer_id": 4,
+    "cost": 510.5,
+    "name": "harold",
+    "last_name": "Moukoudi",
+    "consumption": 275,
+    "street": "solomou 5",
+    "city": "Athens"
+}
+{
+    "customer_id": 8,
+    "cost": 490.6,
+    "name": "jens",
+    "last_name": "Jonsson",
+    "consumption": 95,
+    "street": "mitropoleos 7",
+    "city": "Athens"
+}
+{
+    "customer_id": 1,
+    "cost": 450.0,
+    "name": "cican",
+    "last_name": "Stankovic",
+    "consumption": 250,
+    "street": "dekeleias 21",
+    "city": "Athens"
+}
+{
+    "customer_id": 5,
+    "cost": 495.6,
+    "name": "lazaros",
+    "last_name": "Rota",
+    "consumption": 260,
+    "street": "panepistimiou 100",
+    "city": "Athens"
+}
+{
+    "customer_id": 3,
+    "cost": 480.0,
+    "name": "domagoj",
+    "last_name": "Vida",
+    "consumption": 290,
+    "street": "kifisias 10",
+    "city": "Athens"
+}
+{
+    "customer_id": 15,
+    "cost": 480.5,
+    "name": "nordin",
+    "last_name": "Amrabat",
+    "consumption": 75,
+    "street": "kountourioti 20",
+    "city": "Athens"
+}
+{
+    "customer_id": 14,
+    "cost": 525.2,
+    "name": "ezequiel",
+    "last_name": "Ponce",
+    "consumption": 310,
+    "street": "karaiskaki 3",
+    "city": "Athens"
+}
+{
+    "customer_id": 12,
+    "cost": 475.4,
+    "name": "petros",
+    "last_name": "Mantalos",
+    "consumption": 315,
+    "street": "akadimias 55",
+    "city": "Athens"
+}
+{
+    "customer_id": 10,
+    "cost": 505.5,
+    "name": "orbelin",
+    "last_name": "Pineda",
+    "consumption": 270,
+    "street": "omonia 33",
+    "city": "Athens"
+}
+{
+    "customer_id": 9,
+    "cost": 500.3,
+    "name": "mijat",
+    "last_name": "Gacinovic",
+    "consumption": 285,
+    "street": "athinas 45",
+    "city": "Athens"
+}
+{
+    "customer_id": 16,
+    "cost": 495.5,
+    "name": "levi",
+    "last_name": "Garcia",
+    "consumption": 285,
+    "street": "poseidonos 65",
+    "city": "Athens"
+}
+{
+    "customer_id": 11,
+    "cost": 485.2,
+    "name": "steven",
+    "last_name": "Zuber",
+    "consumption": 300,
+    "street": "vasilissis sofias 12",
+    "city": "Athens"
+}
+{
+    "customer_id": 13,
+    "cost": 515.9,
+    "name": "sergio",
+    "last_name": "Araujo",
+    "consumption": 90,
+    "street": "stadiou 78",
+    "city": "Athens"
+}
+{
+    "customer_id": 20,
+    "cost": 475.1,
+    "name": "petros",
+    "last_name": "Mandalos",
+    "consumption": 305,
+    "street": "aiolou 15",
+    "city": "Athens"
+}
+{
+    "customer_id": 18,
+    "cost": 490.4,
+    "name": "zini",
+    "last_name": "Zinedine",
+    "consumption": 275,
+    "street": "thiseos 99",
+    "city": "Athens"
+}
+{
+    "customer_id": 19,
+    "cost": 510.4,
+    "name": "mihalis",
+    "last_name": "Bakakis",
+    "consumption": 85,
+    "street": "kifisias 120",
+    "city": "Athens"
+}
+{
+    "customer_id": 17,
+    "cost": 505.2,
+    "name": "kostas",
+    "last_name": "Galanopoulos",
+    "consumption": 320,
+    "street": "iera odos 90",
+    "city": "Athens"
+}
