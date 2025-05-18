@@ -77,6 +77,7 @@ class SchemaHandler:
 
         return self.schemas[latest_version]
 
+
 #Mock schema registry and register dynamic schemas 
 schema_registry = SchemaHandler()
 schema_registry.register_schema('input_json', 1, {'fields': ['customer id', 'cost']})
