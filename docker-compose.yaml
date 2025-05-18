@@ -1,18 +1,32 @@
+version: '3.8'
+
 services:
   mongo:
     image: mongo:latest
     container_name: mongodb
     restart: always
     ports:
-      - "27017:27017" # Expose MongoDB on the default port
+      - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root # Set the admin username
-      MONGO_INITDB_ROOT_PASSWORD: password # Set the admin password
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - mongo-data:/data/db # Persist MongoDB data
-      - mongo-config:/data/configdb # Persist MongoDB configuration
+      - mongo-data:/data/db
+      - mongo-config:/data/configdb
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: flink-app
+    depends_on:
+      - mongo
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - .:/opt/flink/app
+    command: ["python", "/opt/flink/app/main.py"]
 
 volumes:
   mongo-data:
-    driver: local
   mongo-config:

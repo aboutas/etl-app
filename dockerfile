@@ -13,21 +13,20 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Install Apache Flink Python API (PyFlink) and necessary dependencies
-RUN pip install apache-flink==1.17.0
+RUN pip install apache-flink==1.17.0 "pymongo[srv]"
 
 # Set the working directory inside the container
 WORKDIR /opt/flink/app
 
 COPY config.json .
-COPY transformations.py .
+COPY helpers.py .
+COPY main.py .
 COPY schema_handler.py .
-COPY rule_manager.py .
-COPY main_etl.py .
-COPY file_helpers.py .
+COPY transformations.py .
+COPY transformer.py .
 
 COPY input.json /opt/flink/app/input.json
 COPY selected_rules.json /opt/flink/app/selected_rules.json
 
 RUN mkdir -p /opt/flink/output
 
-CMD ["python", "/opt/flink/app/main_etl.py"]
