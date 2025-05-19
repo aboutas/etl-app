@@ -1,8 +1,6 @@
-import json
-import os
-from typing import Any, Callable, Union
 from pymongo import MongoClient
-import json, os
+from typing import Any, Callable, Union, Dict
+import json, os, time
 import time
 
 def initialize_rules() -> dict[str, dict[str, Callable]]:
@@ -149,8 +147,6 @@ def log_message(verbose, message):
     if verbose > 0:
         print(message)
 
-from typing import Any
-
 def flatten_dict(d: dict[str, Any], parent_key: str = '', sep: str = '.') -> dict[str, Any]:
     """
     Flatten nested dictionaries into a single-level dict with dotted keys.
@@ -166,3 +162,6 @@ def flatten_dict(d: dict[str, Any], parent_key: str = '', sep: str = '.') -> dic
         else:
             items[new_key] = v
     return items
+
+
+

@@ -24,8 +24,9 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     volumes:
-      - .:/opt/flink/app
-    command: ["python", "/opt/flink/app/main.py"]
+      - .:/opt/flink/etl_app
+    working_dir: /opt/flink/etl_app
+    command: ["python", "-m", "main"]
 
 volumes:
   mongo-data:

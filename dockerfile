@@ -1,23 +1,21 @@
-# Use a slim Python base image to keep it lightweight
+# Use a slim Python base image
 FROM python:3.10-slim-bullseye
 
-# Install system dependencies and Java (required for Flink)
+# Install system dependencies and Java for PyFlink
 RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     ca-certificates \
     openjdk-11-jre-headless \
     && rm -rf /var/lib/apt/lists/*
 
-# Set up environment variables for Java (required for PyFlink)
+# Java env vars
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
 
-# Install Apache Flink Python API (PyFlink) and necessary dependencies
-RUN pip install apache-flink==1.17.0 "pymongo[srv]"
-RUN pip install requests
+# Install PyFlink + Mongo + requests
+RUN pip install apache-flink==1.17.0 "pymongo[srv]" requests
 
-# Set the working directory inside the container
-WORKDIR /opt/flink/app
+WORKDIR /opt/flink/etl_app
 
 COPY config.json .
 COPY helpers.py .
@@ -27,6 +25,7 @@ COPY transformations.py .
 COPY transformer.py .
 COPY api_client.py .
 
-COPY input.json /opt/flink/app/input.json
-COPY selected_rules.json /opt/flink/app/selected_rules.json
-
+COPY input.json input.json
+COPY selected_rules.json selected_rules.json
+# Ensure module can run with -m etl_app.main
+RUN touch etl_app/__init__.py || mkdir -p etl_app && touch etl_app/__init__.py
