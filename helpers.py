@@ -3,6 +3,8 @@ import os
 from typing import Any, Callable
 from pymongo import MongoClient
 import json, os
+from typing import Any
+import time
 
 def initialize_rules() -> dict[str, dict[str, Callable]]:
     from transformations import Transformations  # local import to avoid circular issues
@@ -48,29 +50,31 @@ def extract_id(input_data: dict) -> tuple[str, Any]:
         return selected_key, input_data[selected_key]
     return "id", hash(json.dumps(input_data, sort_keys=True))
 
-def log_applied_rules(log_file: str, input_id: Any, applied_rules: list[str]) -> None:
-    try:
-        with open(log_file, "a") as log_file_handle:
-            log_entry = f"Id: {input_id} | Applied Rules: {', '.join(applied_rules)}\n"
-            log_file_handle.write(log_entry)
-    except Exception as e:
-        print(f"Error writing to log file: {e}")
+def log_applied_rules(input_id: Any, applied_rules: list[str], transformation_times: list[str]) -> dict:
+    return {
+        "input_id": input_id,
+        "applied_rules": applied_rules or ["None"],
+        "transformation_times": transformation_times or ["N/A"],
+        "logged_at": time.strftime("%Y-%m-%d %H:%M:%S")
+    }
 
-def insert_into_mongo(data: dict) -> None:
+def insert_into_mongo(data: dict, collection_name: str, database_name: str = "transformed_data") -> Union[None, Exception]:
     try:
-        client = MongoClient("mongodb://root:password@mongo:27017")
+        client = MongoClient("mongodb://root:password@mongo:27017", serverSelectionTimeoutMS=5000)
         client.admin.command("ping")
-        database= client["transformed_data"]
-        database.create_collection("example_collection")
-        collection = database["example_collection"]
-        collection.insert_one(data)
-        
-        for x in collection.find():
-            print(x)
 
-        print("Inserted into MongoDB")
+        database = client[database_name]
+
+        if collection_name not in database.list_collection_names():
+            database.create_collection(collection_name)
+
+        collection = database[collection_name]
+        collection.insert_one(data)
+
+        print(f"Inserted into MongoDB collection: {collection_name}")
     except Exception as e:
         print(f"MongoDB insert failed: {e}")
+        return e
 
 def load_config(config_path: str = "config.json") -> dict:
     """

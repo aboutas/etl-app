@@ -33,17 +33,19 @@ class Transformer(MapFunction):
                             func = self.rules_registry[category][rule_name]
                             valid_fields = [f for f in fields if f in output_data]
                             if valid_fields:
-                                t0 = time.time()
+                                start_time = time.time()
                                 transformed, _ = func(output_data, valid_fields)
                                 output_data.update(transformed)
-                                t1 = time.time()
-                                transformation_times.append(f"{rule_name}: {t1 - t0:.4f} sec")
+                                end_time = time.time()
+                                time_taken = end_time - start_time
                                 applied_rules.append(f"{category}.{rule_name} ({', '.join(valid_fields)})")
-
-            log_applied_rules(self.log_file, input_id, applied_rules or ["None"])
+                                transformation_times.append(f"{rule_name}: {time_taken:.4f} sec")
             log_message(self.verbose, f"Total map() execution: {time.time() - start_time:.4f} sec")
 
-            insert_into_mongo(output_data)
+            log_data = log_applied_rules(input_id, applied_rules, transformation_times)
+           
+            insert_into_mongo(log_data, collection_name="transformation_logs")
+            insert_into_mongo(output_data, collection_name="transformed_data")
 
             return json.dumps(output_data)
 
