@@ -1,11 +1,5 @@
 {
   "data_cleaning": {
-    "standardize_format": ["name", "street"]
-  },
-  "data_transformation": {
-    "type_conversion": ["cost"]
-  },
-  "anonymization": {
-    "tokenization": ["city"]
-  }  
+    "standardize_format": ["name"]
+  }
 }

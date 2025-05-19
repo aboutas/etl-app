@@ -25,9 +25,8 @@ COPY main.py .
 COPY schema_handler.py .
 COPY transformations.py .
 COPY transformer.py .
+COPY api_client.py .
 
 COPY input.json /opt/flink/app/input.json
 COPY selected_rules.json /opt/flink/app/selected_rules.json
-
-RUN mkdir -p /opt/flink/output
 

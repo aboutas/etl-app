@@ -148,3 +148,21 @@ def log_message(verbose, message):
     """
     if verbose > 0:
         print(message)
+
+from typing import Any
+
+def flatten_dict(d: dict[str, Any], parent_key: str = '', sep: str = '.') -> dict[str, Any]:
+    """
+    Flatten nested dictionaries into a single-level dict with dotted keys.
+    """
+    items = {}
+    for k, v in d.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.update(flatten_dict(v, new_key, sep=sep))
+        elif isinstance(v, list) and v and isinstance(v[0], dict):
+            # Optional: flatten first element of list if it's a dict
+            items.update(flatten_dict(v[0], new_key, sep=sep))
+        else:
+            items[new_key] = v
+    return items
