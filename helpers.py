@@ -77,14 +77,14 @@ def log_applied_rules(input_id: Any, applied_rules: list[str], transformation_ti
 #         return e
 
 # Testing Purposes
-def insert_into_mongo(data: dict, collection_name: str, database_name: str = "transformed_data", preview_docs: int = 1) -> Union[None, Exception]:
+def insert_into_mongo(data: dict, collection_name: str, database_name: str = "etl_result", preview_docs: int = 1) -> Union[None, Exception]:
     """
     Inserts a document into MongoDB and optionally prints recent documents for verification.
 
     Args:
         data (dict): The document to insert.
         collection_name (str): The name of the MongoDB collection.
-        database_name (str): The MongoDB database name. Defaults to "transformed_data".
+        database_name (str): The MongoDB database name. Defaults to "transetl_result".
         preview_docs (int): Number of recent documents to preview after insert.
 
     Returns:
@@ -102,15 +102,15 @@ def insert_into_mongo(data: dict, collection_name: str, database_name: str = "tr
         collection = database[collection_name]
         collection.insert_one(data)
 
-        print(f"✅ Inserted into MongoDB collection: {collection_name}")
+        print(f"Inserted into MongoDB collection: {collection_name}")
 
         if preview_docs > 0:
-            print(f"🔍 Preview of last {preview_docs} document(s) in '{collection_name}':")
+            print(f"Preview of last {preview_docs} document(s) in '{collection_name}':")
             for doc in collection.find().sort("_id", -1).limit(preview_docs):
                 print(doc)
 
     except Exception as e:
-        print(f"❌ MongoDB insert failed: {e}")
+        print(f"MongoDB insert failed: {e}")
         return e
 
 def load_config(config_path: str = "config.json") -> dict:

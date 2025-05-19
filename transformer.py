@@ -50,6 +50,7 @@ class Transformer(MapFunction):
             return json.dumps(output_data)
 
         except Exception as e:
+            error_log = log_applied_rules("ERROR", [error_msg], {})  # No timings for failed case
+            insert_into_mongo(error_log, collection_name="transformation_logs")
             error_msg = f"Error processing record: {e}"
-            log_applied_rules(self.log_file, "ERROR", [error_msg])
             return json.dumps({"error": str(e), id_key if 'id_key' in locals() else "id": "UNKNOWN"})

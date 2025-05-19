@@ -14,6 +14,7 @@ ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Install Apache Flink Python API (PyFlink) and necessary dependencies
 RUN pip install apache-flink==1.17.0 "pymongo[srv]"
+RUN pip install requests
 
 # Set the working directory inside the container
 WORKDIR /opt/flink/app
