@@ -1,9 +1,8 @@
 import json
 import os
-from typing import Any, Callable
+from typing import Any, Callable, Union
 from pymongo import MongoClient
 import json, os
-from typing import Any
 import time
 
 def initialize_rules() -> dict[str, dict[str, Callable]]:
@@ -58,10 +57,42 @@ def log_applied_rules(input_id: Any, applied_rules: list[str], transformation_ti
         "logged_at": time.strftime("%Y-%m-%d %H:%M:%S")
     }
 
-def insert_into_mongo(data: dict, collection_name: str, database_name: str = "transformed_data") -> Union[None, Exception]:
+# # Comment in for now.
+# def insert_into_mongo(data: dict, collection_name: str, database_name: str = "transformed_data") -> Union[None, Exception]:
+#     try:
+#         client = MongoClient("mongodb://root:password@mongo:27017", serverSelectionTimeoutMS=5000)
+#         client.admin.command("ping")
+
+#         database = client[database_name]
+
+#         if collection_name not in database.list_collection_names():
+#             database.create_collection(collection_name)
+
+#         collection = database[collection_name]
+#         collection.insert_one(data)
+
+#         print(f"Inserted into MongoDB collection: {collection_name}")
+#     except Exception as e:
+#         print(f"MongoDB insert failed: {e}")
+#         return e
+
+# Testing Purposes
+def insert_into_mongo(data: dict, collection_name: str, database_name: str = "transformed_data", preview_docs: int = 1) -> Union[None, Exception]:
+    """
+    Inserts a document into MongoDB and optionally prints recent documents for verification.
+
+    Args:
+        data (dict): The document to insert.
+        collection_name (str): The name of the MongoDB collection.
+        database_name (str): The MongoDB database name. Defaults to "transformed_data".
+        preview_docs (int): Number of recent documents to preview after insert.
+
+    Returns:
+        None or Exception: Returns Exception if failed, otherwise None.
+    """
     try:
         client = MongoClient("mongodb://root:password@mongo:27017", serverSelectionTimeoutMS=5000)
-        client.admin.command("ping")
+        client.admin.command("ping")  # Check connection
 
         database = client[database_name]
 
@@ -71,9 +102,15 @@ def insert_into_mongo(data: dict, collection_name: str, database_name: str = "tr
         collection = database[collection_name]
         collection.insert_one(data)
 
-        print(f"Inserted into MongoDB collection: {collection_name}")
+        print(f"✅ Inserted into MongoDB collection: {collection_name}")
+
+        if preview_docs > 0:
+            print(f"🔍 Preview of last {preview_docs} document(s) in '{collection_name}':")
+            for doc in collection.find().sort("_id", -1).limit(preview_docs):
+                print(doc)
+
     except Exception as e:
-        print(f"MongoDB insert failed: {e}")
+        print(f"❌ MongoDB insert failed: {e}")
         return e
 
 def load_config(config_path: str = "config.json") -> dict:
