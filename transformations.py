@@ -70,20 +70,17 @@ class Transformations:
             if key in fields and isinstance(value, str):
                 val = value.strip()
                 parsed = None
-
                 # Try standard UTC (Z) format
                 try:
                     parsed = datetime.strptime(val, "%Y-%m-%dT%H:%M:%SZ")
                 except ValueError:
                     pass
-
                 # Try offset format like -07:00
                 if not parsed:
                     try:
                         parsed = datetime.strptime(val, "%Y-%m-%dT%H:%M:%S%z")
                     except ValueError:
                         pass
-
                 # If parsed successfully, format it
                 if parsed:
                     transformed[key] = parsed.strftime("%Y/%m/%d")

@@ -39,8 +39,7 @@ class Transformer(MapFunction):
                     for rule_name, fields in transformations.items():
                         if rule_name in self.rules_registry[category]:
                             func = self.rules_registry[category][rule_name]
-
-                            # ✅ Explicitly use dotted fields (as is, no extra handling needed)
+                            #Explicitly use dotted fields (as is, no extra handling needed)
                             valid_fields = [f for f in fields if f in output_data and f in expected_fields]
 
                             if valid_fields:
