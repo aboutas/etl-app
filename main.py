@@ -6,7 +6,7 @@ import logging, json
 from helpers import load_config
 from schema_handler import schema_registry
 
-
+# Used for test reason. Have to declare in dockerFile
 if __name__ == "__main__":
     try:
         config = load_config()

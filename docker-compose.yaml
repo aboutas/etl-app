@@ -14,19 +14,53 @@ services:
       - mongo-data:/data/db
       - mongo-config:/data/configdb
 
-  app:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  etl-producer:
+    build:
+      context: .         # Build from current directory!
+      dockerfile: Dockerfile
+    container_name: etl-producer
+    depends_on:
+      - kafka
+    environment:
+      - PYTHONUNBUFFERED=1
+    working_dir: /opt/flink/etl_app
+    command: ["python", "producer.py"]   # Will run producer.py in the correct place!
+
+  etl-consumer:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: flink-app
+    container_name: etl-consumer
     depends_on:
+      - kafka
       - mongo
     environment:
       - PYTHONUNBUFFERED=1
-    volumes:
-      - .:/opt/flink/etl_app
     working_dir: /opt/flink/etl_app
-    command: ["python", "-m", "main"]
+    command: ["python", "consumer.py"]
 
 volumes:
   mongo-data:
