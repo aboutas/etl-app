@@ -30,24 +30,29 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
+      - "29092:29092"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   etl-producer:
     build:
-      context: .         # Build from current directory!
+      context: .
       dockerfile: Dockerfile
     container_name: etl-producer
     depends_on:
       - kafka
+    restart: on-failure
     environment:
       - PYTHONUNBUFFERED=1
     working_dir: /opt/flink/etl_app
-    command: ["python", "producer.py"]   # Will run producer.py in the correct place!
+    command: ["python", "producer.py"]
+    volumes:
+      - .:/opt/flink/etl_app
 
   etl-consumer:
     build:
@@ -57,10 +62,13 @@ services:
     depends_on:
       - kafka
       - mongo
+    restart: on-failure
     environment:
       - PYTHONUNBUFFERED=1
     working_dir: /opt/flink/etl_app
     command: ["python", "consumer.py"]
+    volumes:
+      - .:/opt/flink/etl_app
 
 volumes:
   mongo-data:
