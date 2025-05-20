@@ -25,7 +25,6 @@ class SchemaHandler:
             raise KeyError(f"No schema for {source} version {version}")
         return self.schemas[key]
 
-    # Standalone function – not inside the class!
     def handle_schema_from_input(self,data: list[dict], source: str) -> int:
         flattened_sample = flatten_dict(data[0])
         schema = {'fields': list(flattened_sample.keys())}
