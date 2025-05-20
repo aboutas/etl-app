@@ -61,21 +61,38 @@ class Transformations:
         return {"full_address": full_address}, False
 
     # ------------------ Text Manipulation ------------------
+    from datetime import datetime
+
     @staticmethod
     def trimming(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
         for key, value in data.items():
             if key in fields and isinstance(value, str):
+                val = value.strip()
+                parsed = None
+
+                # Try standard UTC (Z) format
                 try:
-                    # Attempt to parse datetime in ISO format
-                    dt = datetime.strptime(value.strip(), "%Y-%m-%dT%H:%M:%SZ")
-                    transformed[key] = dt.strftime("%Y/%m/%d")
+                    parsed = datetime.strptime(val, "%Y-%m-%dT%H:%M:%SZ")
                 except ValueError:
-                    # If not datetime, just strip whitespace
-                    transformed[key] = value.strip()
+                    pass
+
+                # Try offset format like -07:00
+                if not parsed:
+                    try:
+                        parsed = datetime.strptime(val, "%Y-%m-%dT%H:%M:%S%z")
+                    except ValueError:
+                        pass
+
+                # If parsed successfully, format it
+                if parsed:
+                    transformed[key] = parsed.strftime("%Y/%m/%d")
+                else:
+                    transformed[key] = val  # fallback
             else:
                 transformed[key] = value
         return transformed, False
+
 
     @staticmethod
     def regex_operations(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
