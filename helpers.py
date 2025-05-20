@@ -2,6 +2,8 @@ from pymongo import MongoClient
 from typing import Any, Callable, Union, Dict
 import json, os, time
 import time
+from pymongo import MongoClient
+
 
 def initialize_rules() -> dict[str, dict[str, Callable]]:
     from transformations import Transformations  # local import to avoid circular issues
@@ -55,57 +57,28 @@ def log_applied_rules(input_id: Any, applied_rules: list[str], transformation_ti
         "logged_at": time.strftime("%Y-%m-%d %H:%M:%S")
     }
 
-# # Comment in for now.
-# def insert_into_mongo(data: dict, collection_name: str, database_name: str = "transformed_data") -> Union[None, Exception]:
-#     try:
-#         client = MongoClient("mongodb://root:password@mongo:27017", serverSelectionTimeoutMS=5000)
-#         client.admin.command("ping")
-
-#         database = client[database_name]
-
-#         if collection_name not in database.list_collection_names():
-#             database.create_collection(collection_name)
-
-#         collection = database[collection_name]
-#         collection.insert_one(data)
-
-#         print(f"Inserted into MongoDB collection: {collection_name}")
-#     except Exception as e:
-#         print(f"MongoDB insert failed: {e}")
-#         return e
-
-# Testing Purposes
-def insert_into_mongo(data: dict, collection_name: str, database_name: str = "etl_result", preview_docs: int = 1) -> Union[None, Exception]:
-    """
-    Inserts a document into MongoDB and optionally prints recent documents for verification.
-
-    Args:
-        data (dict): The document to insert.
-        collection_name (str): The name of the MongoDB collection.
-        database_name (str): The MongoDB database name. Defaults to "transetl_result".
-        preview_docs (int): Number of recent documents to preview after insert.
-
-    Returns:
-        None or Exception: Returns Exception if failed, otherwise None.
-    """
+def insert_into_mongo(data: dict, collection_name: str, database_name: str = "etl_result") -> Union[None, Exception]:
     try:
         client = MongoClient("mongodb://root:password@mongo:27017", serverSelectionTimeoutMS=5000)
-        client.admin.command("ping")  # Check connection
+        client.admin.command("ping")
 
-        database = client[database_name]
+        db = client[database_name]
+        collection = db[collection_name]
+        history_collection = db[f"history_{collection_name}"]
 
-        if collection_name not in database.list_collection_names():
-            database.create_collection(collection_name)
+        # 1. Backup existing documents (if any) to history collection
+        existing_docs = list(collection.find())
+        if existing_docs:
+            history_collection.insert_many(existing_docs)
+            print(f"Backed up {len(existing_docs)} documents to '{history_collection.name}'")
 
-        collection = database[collection_name]
+        # 2. Clear the current collection
+        collection.delete_many({})
+        print(f"Cleared collection '{collection_name}'")
+
+        # 3. Insert new document
         collection.insert_one(data)
-
-        print(f"Inserted into MongoDB collection: {collection_name}")
-
-        if preview_docs > 0:
-            print(f"Preview of last {preview_docs} document(s) in '{collection_name}':")
-            for doc in collection.find().sort("_id", -1).limit(preview_docs):
-                print(doc)
+        print(f"Inserted new document into '{collection_name}'")
 
     except Exception as e:
         print(f"MongoDB insert failed: {e}")
@@ -162,6 +135,3 @@ def flatten_dict(d: dict[str, Any], parent_key: str = '', sep: str = '.') -> dic
         else:
             items[new_key] = v
     return items
-
-
-

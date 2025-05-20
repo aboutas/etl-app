@@ -25,7 +25,6 @@ COPY transformations.py .
 COPY transformer.py .
 COPY api_client.py .
 
-COPY input.json input.json
-COPY selected_rules.json selected_rules.json
+COPY rules_plan.json rules_plan.json
 # Ensure module can run with -m etl_app.main
 RUN touch etl_app/__init__.py || mkdir -p etl_app && touch etl_app/__init__.py

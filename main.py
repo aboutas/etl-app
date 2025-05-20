@@ -11,7 +11,7 @@ if __name__ == "__main__":
     try:
         config = load_config()
         verbosity = config.get("verbosity", 0)
-        applied_rules_path = config["applied_rules_path"]
+        rules_plan = config["rules_plan"]
         url = config.get("url")
         api_key = config.get("api_key")
 
@@ -25,13 +25,13 @@ if __name__ == "__main__":
         logging.info("Reading from API")
         schema_version = schema_registry.handle_schema_from_input(json_inputs, source="open_aq_data")
 
-        with open(applied_rules_path, 'r') as f:
-            selected_rules = json.load(f)
+        with open(rules_plan, 'r') as f:
+            rules_plan = json.load(f)
 
         env = StreamExecutionEnvironment.get_execution_environment()
         data_stream = env.from_collection([json.dumps(item) for item in json_inputs])
 
-        rule_manager = Transformer(schema_manager=schema_registry,selected_rules=selected_rules,verbose=verbosity,schema_version=schema_version)
+        rule_manager = Transformer(schema_manager=schema_registry,selected_rules=rules_plan,verbose=verbosity,schema_version=schema_version)
 
         transformed_stream = data_stream.map(rule_manager)
         env.execute("ETL Pipeline: Transform JSON and Store in MongoDB")

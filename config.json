@@ -1,6 +1,6 @@
 {
     "verbosity" : 1,
-    "applied_rules_path": "/opt/flink/etl_app/selected_rules.json" ,
+    "rules_plan": "/opt/flink/etl_app/rules_plan.json" ,
     "url" : "https://api.openaq.org/v3/locations/2178",
     "api_key" : "b8348f18c35d42a8544d1b350ecfc7a89c28217032e6d9b0988084bac1145ff9"  
 }

@@ -1,0 +1,12 @@
+{
+  "data_cleaning": {
+    "standardize_format": ["name", "country.name", "owner.name"],
+    "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
+  },
+  "anonymization": {
+    "data_masking": ["id", "owner.id", "country.id"]
+  },
+  "data_standardization": {
+    "capitalization_rules": ["sensors.name"]
+  }
+}
