@@ -4,6 +4,7 @@ from datetime import datetime
 
 class Transformations:
     # ------------------ Data Cleaning ------------------
+    # 1
     @staticmethod
     def standardize_format(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -25,12 +26,14 @@ class Transformations:
         transformed = {rename_map.get(key, key): value for key, value in data.items()}
         return transformed, False
 
+    #1
     @staticmethod
     def capitalization_rules(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {key: value.upper() if key in fields and isinstance(value, str) else value for key, value in data.items()}
         return transformed, False
 
     # ------------------ Data Validation ------------------
+    #1
     @staticmethod
     def range_checks(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {key: value for key, value in data.items() if key in fields and isinstance(value, (int, float)) and 0 <= value <= 10000}
@@ -61,6 +64,7 @@ class Transformations:
         return {"full_address": full_address}, False
 
     # ------------------ Text Manipulation ------------------
+    #1
     @staticmethod
     def trimming(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -88,7 +92,7 @@ class Transformations:
                 transformed[key] = value
         return transformed, False
 
-
+    
     @staticmethod
     def regex_operations(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -100,6 +104,7 @@ class Transformations:
         return transformed, False
 
     # ------------------ Time Transformations ------------------
+    #1
     @staticmethod
     def date_extraction(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -109,6 +114,7 @@ class Transformations:
         return transformed, False
 
     # ------------------ Anonymization ------------------
+    #1
     @staticmethod
     def data_masking(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
