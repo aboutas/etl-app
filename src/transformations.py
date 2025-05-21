@@ -32,11 +32,11 @@ class Transformations:
         transformed = {key: value.upper() if key in fields and isinstance(value, str) else value for key, value in data.items()}
         return transformed, False
 
-    # ------------------ Data Validation ------------------
+    # ------------------ Data Validation -------------------
     #1
     @staticmethod
     def range_checks(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
-        transformed = {key: value for key, value in data.items() if key in fields and isinstance(value, (int, float)) and 0 <= value <= 10000}
+        transformed = {key: value for key, value in data.items() if key in fields and isinstance(value, (int, float)) and 0 <= value <= 100}
         return transformed, False
 
     # ------------------ Data Transformation ------------------
