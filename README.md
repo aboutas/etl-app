@@ -78,7 +78,7 @@ cd etl-app
 ``` bash
 docker-compose up --build
 ```
-*Starts MongoDB, Kafka, Zookeeper, producer, and consumer containers.
+* Starts MongoDB, Kafka, Zookeeper, producer, and consumer containers.
 
 ### 4. See the Data
 Browse results in MongoDB
