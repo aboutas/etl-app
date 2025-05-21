@@ -57,33 +57,6 @@ def log_applied_rules(input_id: Any, applied_rules: list[str], transformation_ti
         "logged_at": time.strftime("%Y-%m-%d %H:%M:%S")
     }
 
-def insert_into_mongo(data: dict, collection_name: str, database_name: str = "etl_result") -> Union[None, Exception]:
-    try:
-        client = MongoClient("mongodb://root:password@mongo:27017", serverSelectionTimeoutMS=5000)
-        client.admin.command("ping")
-
-        db = client[database_name]
-        collection = db[collection_name]
-        history_collection = db[f"history_{collection_name}"]
-
-        # 1. Backup existing documents (if any) to history collection
-        existing_docs = list(collection.find())
-        if existing_docs:
-            history_collection.insert_many(existing_docs)
-            print(f"Backed up {len(existing_docs)} documents to '{history_collection.name}'")
-
-        # 2. Clear the current collection
-        collection.delete_many({})
-        print(f"Cleared collection '{collection_name}'")
-
-        # 3. Insert new document
-        collection.insert_one(data)
-        print(f"Inserted new document into '{collection_name}'")
-
-    except Exception as e:
-        print(f"MongoDB insert failed: {e}")
-        return e
-
 def load_config(config_path: str = "config.json") -> dict:
     """
     Loads configuration settings from a JSON file.

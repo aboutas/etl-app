@@ -1,5 +1,6 @@
 from typing import Any, Dict
 from helpers import flatten_dict
+from mongodb import save_schema_to_mongo
 
 class SchemaHandler:
     def __init__(self):
@@ -30,7 +31,8 @@ class SchemaHandler:
         schema = {'fields': list(flattened_sample.keys())}
         version = self.get_next_version(source)
         self.register_schema(source, version, schema)
+        save_schema_to_mongo(source, version, schema)
         return version
 
-
 schema_registry = SchemaHandler()
+
