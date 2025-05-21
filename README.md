@@ -63,7 +63,7 @@ The pipeline is modular, allowing users to adapt the rule plan, support new APIs
 ## Setup & Running
 
 ### 1. Clone the repo
-``` 
+``` bash
 https://github.com/aboutas/etl-app.git
 cd etl-app
 ```
@@ -75,7 +75,7 @@ cd etl-app
 
 
 ### 3. Build & Start All Services
-``` 
+``` bash
 docker-compose up --build
 ```
 *Starts MongoDB, Kafka, Zookeeper, producer, and consumer containers.
@@ -84,7 +84,7 @@ docker-compose up --build
 Browse results in MongoDB
 
 ## Rule Plan Example (rules_plan.json)
-``` 
+```json 
 {
   "data_cleaning": {
     "standardize_format": ["name", "country.name", "owner.name"],
