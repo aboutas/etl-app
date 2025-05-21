@@ -50,7 +50,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     working_dir: /opt/flink/etl_app
-    command: ["python", "producer.py"]
+    command: ["python", "src/producer.py"]
     volumes:
       - .:/opt/flink/etl_app
 
