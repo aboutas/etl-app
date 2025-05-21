@@ -64,11 +64,7 @@ The pipeline is modular, allowing users to adapt the rule plan, support new APIs
 
 ### 1. Clone the repo
 ``` bash
-<<<<<<< HEAD
 git clone https://github.com/aboutas/etl-app.git
-=======
-https://github.com/aboutas/etl-app.git
->>>>>>> ec1e10655ba898f1339a3850433071ec09fa1d1b
 cd etl-app
 ```
 
