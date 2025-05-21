@@ -28,7 +28,6 @@ def load_schema_from_mongo(source: str, version: Optional[int] = None) -> Dict[s
         raise ValueError(f"No schema found for source={source} version={version}")
     return schema_doc["schema"]
 
-
 def insert_into_mongo(data: dict, collection_name: str, database_name: str = APP_DATA_COLLECTION ) -> Union[None, Exception]:
     try:
         client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)

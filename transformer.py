@@ -1,7 +1,6 @@
 from pyflink.datastream.functions import MapFunction
 import json, time, os
 from helpers import initialize_rules, log_message, extract_id, log_applied_rules, flatten_dict
-from schema_handler import schema_registry
 from mongodb import insert_into_mongo, load_schema_from_mongo
 
 class Transformer(MapFunction):
@@ -29,14 +28,15 @@ class Transformer(MapFunction):
             id_key, input_id = extract_id(input_data)
             log_message(self.verbose, f"Extract ID result: {id_key} = {input_id}")
 
-            # Ensure dotted field logic
             for category, transformations in self.selected_rules.items():
                 if category in self.rules_registry:
                     for rule_name, fields in transformations.items():
                         if rule_name in self.rules_registry[category]:
                             func = self.rules_registry[category][rule_name]
-                            #Explicitly use dotted fields (as is, no extra handling needed)
-                            valid_fields = [f for f in fields if f in output_data and f in expected_fields]
+                            valid_fields = []
+                            for f in fields:
+                                if f in output_data and f in expected_fields:
+                                    valid_fields.append(f)
 
                             if valid_fields:
                                 t_start = time.time()
@@ -51,7 +51,6 @@ class Transformer(MapFunction):
 
             log_message(self.verbose, f"Total map() execution: {time.time() - start_time:.4f} sec")
 
-            # Logging & Mongo (unchanged)
             log_data = log_applied_rules(input_id, applied_rules, transformation_times)
             insert_into_mongo(flatten_dict(log_data), "transformation_logs")
             insert_into_mongo(output_data, "transformed_data")

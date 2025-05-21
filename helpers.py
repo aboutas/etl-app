@@ -38,10 +38,6 @@ def initialize_rules() -> dict[str, dict[str, Callable]]:
         }
     }
 
-def log_message(verbose: int, message: str) -> None:
-    if verbose == 1:
-        print(message)
-
 def extract_id(input_data: dict) -> tuple[str, Any]:
     id_keys = [key for key in input_data.keys() if "id" in key.lower()]
     selected_key = min(id_keys, key=len) if id_keys else None
@@ -69,22 +65,6 @@ def load_config(config_path: str = "config.json") -> dict:
     """
     with open(config_path, "r") as config_file:
         return json.load(config_file)
-
-def ensure_directory_exists(path: str) -> None:
-    """
-    Ensures that the specified directory exists, creating it if necessary.
-    
-    Parameters:
-        path (str): The path to the directory to check and potentially create.
-    """
-    os.makedirs(path, exist_ok=True)
-
-def save_to_file(data, save_path: str) -> None:
-            """Writes the transformed JSON data to an output file."""
-            data = json.loads(data) 
-            with open(save_path, 'a') as file:
-                json.dump(data, file, indent=4)
-                file.write('\n')
 
 def log_message(verbose, message):
     """

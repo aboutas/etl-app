@@ -61,8 +61,6 @@ class Transformations:
         return {"full_address": full_address}, False
 
     # ------------------ Text Manipulation ------------------
-    from datetime import datetime
-
     @staticmethod
     def trimming(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
