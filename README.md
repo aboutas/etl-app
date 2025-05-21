@@ -75,16 +75,16 @@ cd etl-app
 
 
 ### 3. Build & Start All Services
-''' 
+``` 
 docker-compose up --build
-'''
+```
 *Starts MongoDB, Kafka, Zookeeper, producer, and consumer containers.
 
 ### 4. See the Data
 Browse results in MongoDB
 
 ## Rule Plan Example (rules_plan.json)
-''' 
+```json 
 {
   "data_cleaning": {
     "standardize_format": ["name", "country.name", "owner.name"],
@@ -94,7 +94,7 @@ Browse results in MongoDB
     "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
   }
 }
-'''
+```
 
 * Keys are transformation categories and methods
 
