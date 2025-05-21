@@ -84,7 +84,7 @@ docker-compose up --build
 Browse results in MongoDB
 
 ## Rule Plan Example (rules_plan.json)
-```json 
+``` 
 {
   "data_cleaning": {
     "standardize_format": ["name", "country.name", "owner.name"],
