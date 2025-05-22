@@ -34,7 +34,7 @@ def load_schema_from_mongo(source: str, version: Optional[int] = None) -> Dict[s
 
 def insert_into_mongo(data: dict, collection_name: str, database_name: str = schema_collection ) -> Union[None, Exception]:
     try:
-        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
+        client = MongoClient(mongo_uri)
         client.admin.command("ping")
         db = client[database_name]
         collection = db[collection_name]
