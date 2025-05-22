@@ -49,6 +49,8 @@ services:
     restart: on-failure
     environment:
       - PYTHONUNBUFFERED=1
+      - CONFIG_PATH=/opt/flink/etl_app/config/config.json
+      - MONGO_URI = "mongodb://root:password@mongo:27017"
     working_dir: /opt/flink/etl_app
     command: ["python", "src/producer.py"]
     volumes:
@@ -65,6 +67,8 @@ services:
     restart: on-failure
     environment:
       - PYTHONUNBUFFERED=1
+      - CONFIG_PATH=/opt/flink/etl_app/config/config.json
+      - MONGO_URI = "mongodb://root:password@mongo:27017"
     working_dir: /opt/flink/etl_app
     command: ["python", "src/consumer.py"]
     volumes:

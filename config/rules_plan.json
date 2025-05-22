@@ -6,13 +6,10 @@
     "data_masking": ["id", "owner.id", "country.id"]
   },
   "data_standardization": {
-    "capitalization_rules": ["sensors.name"]
+    "capitalization_rules": ["ismobile"]
   },
   "text_manipulation": {
     "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
-  },
-  "data_Validation" :{
-    "range_checks" : ["id"]
   }
 }
 

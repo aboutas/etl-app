@@ -1,8 +1,6 @@
 from pymongo import MongoClient
-from typing import Any, Callable, Union, Dict
-import json, os, time
-import time
-from pymongo import MongoClient
+from typing import Any, Callable
+import json, time
 
 
 def initialize_rules() -> dict[str, dict[str, Callable]]:
@@ -53,7 +51,7 @@ def log_applied_rules(input_id: Any, applied_rules: list[str], transformation_ti
         "logged_at": time.strftime("%Y-%m-%d %H:%M:%S")
     }
 
-def load_config(config_path: str = "config.json") -> dict:
+def load_config(config_path: str) -> dict:
     """
     Loads configuration settings from a JSON file.
     

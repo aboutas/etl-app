@@ -1,5 +1,5 @@
 from pyflink.datastream.functions import MapFunction
-import json, time, os
+import json, time
 from helpers import initialize_rules, log_message, extract_id, log_applied_rules, flatten_dict
 from mongodb import insert_into_mongo, load_schema_from_mongo
 

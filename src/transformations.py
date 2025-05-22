@@ -3,8 +3,7 @@ from typing import Dict, List, Tuple
 from datetime import datetime
 
 class Transformations:
-    # ------------------ Data Cleaning ------------------
-    # 1
+    # Data Cleaning
     @staticmethod
     def standardize_format(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -14,32 +13,49 @@ class Transformations:
             else:
                 transformed[key] = value
         return transformed, False
-    # ------------------ Data Aggregation ------------------
+
+    # Data Aggregation
     @staticmethod
     def summarization(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
-        total = sum(value for key, value in data.items() if key in fields and isinstance(value, (int, float)))
+        total = 0
+        for key, value in data.items():
+            if key in fields and isinstance(value, (int, float)):
+                total += value
         return {"total_sum": total}, False
 
-    # ------------------ Data Standardization ------------------
+    # Data Standardization
     @staticmethod
     def renaming_columns(data: Dict, rename_map: Dict[str, str]) -> Tuple[Dict, bool]:
-        transformed = {rename_map.get(key, key): value for key, value in data.items()}
+        transformed = {}
+        for key, value in data.items():
+            new_key = rename_map.get(key, key)
+            transformed[new_key] = value
         return transformed, False
 
-    #1
     @staticmethod
     def capitalization_rules(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
-        transformed = {key: value.upper() if key in fields and isinstance(value, str) else value for key, value in data.items()}
+        transformed = {}
+        for key, value in data.items():
+            if key in fields and isinstance(value, str):
+                transformed[key] = value.upper()
+            else:
+                transformed[key] = value
         return transformed, False
 
-    # ------------------ Data Validation -------------------
-    #1
+    # Data Validation
     @staticmethod
     def range_checks(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
-        transformed = {key: value for key, value in data.items() if key in fields and isinstance(value, (int, float)) and 0 <= value <= 100}
+        transformed = {}
+        for key, value in data.items():
+            if key in fields:
+                if isinstance(value, (int, float)) and 0 <= value <= 100:
+                    transformed[key] = value
+            else:
+                transformed[key] = value # untouched
         return transformed, False
 
-    # ------------------ Data Transformation ------------------
+
+    # Data Transformation
     @staticmethod
     def type_conversion(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -52,8 +68,16 @@ class Transformations:
 
     @staticmethod
     def normalization(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
-        max_val = max((value for key, value in data.items() if key in fields and isinstance(value, (int, float))), default=1)
-        transformed = {key: (value / max_val if key in fields and isinstance(value, (int, float)) else value) for key, value in data.items()}
+        max_val = 1
+        for key, value in data.items():
+            if key in fields and isinstance(value, (int, float)) and value > max_val:
+                max_val = value
+        transformed = {}
+        for key, value in data.items():
+            if key in fields and isinstance(value, (int, float)):
+                transformed[key] = value / max_val
+            else:
+                transformed[key] = value
         return transformed, False
 
     @staticmethod
@@ -63,8 +87,7 @@ class Transformations:
         full_address = ", ".join([part for part in [street, city] if part])
         return {"full_address": full_address}, False
 
-    # ------------------ Text Manipulation ------------------
-    #1
+    # Text Manipulation
     @staticmethod
     def trimming(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -72,27 +95,23 @@ class Transformations:
             if key in fields and isinstance(value, str):
                 val = value.strip()
                 parsed = None
-                # Try standard UTC (Z) format
                 try:
                     parsed = datetime.strptime(val, "%Y-%m-%dT%H:%M:%SZ")
                 except ValueError:
                     pass
-                # Try offset format like -07:00
                 if not parsed:
                     try:
                         parsed = datetime.strptime(val, "%Y-%m-%dT%H:%M:%S%z")
                     except ValueError:
                         pass
-                # If parsed successfully, format it
                 if parsed:
                     transformed[key] = parsed.strftime("%Y/%m/%d")
                 else:
-                    transformed[key] = val  # fallback
+                    transformed[key] = val
             else:
                 transformed[key] = value
         return transformed, False
 
-    
     @staticmethod
     def regex_operations(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -103,8 +122,7 @@ class Transformations:
                 transformed[key] = value
         return transformed, False
 
-    # ------------------ Time Transformations ------------------
-    #1
+    # Time Transformations
     @staticmethod
     def date_extraction(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
@@ -113,14 +131,15 @@ class Transformations:
                 transformed[f"{key}_year"] = value[:4]
         return transformed, False
 
-    # ------------------ Anonymization ------------------
-    #1
+    # Anonymization
     @staticmethod
     def data_masking(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
         for key, value in data.items():
-            if isinstance(value, (str, int)) and any(key.endswith(f) for f in fields):
-                transformed[key] = f"XXXX-{str(value)[-4:]}"
+            if key in fields and isinstance(value, (str, int)):
+                v = str(value)
+                masked = "XXXX-" + v[-4:] if len(v) >= 4 else "XXXX-" + v
+                transformed[key] = masked
             else:
                 transformed[key] = value
         return transformed, False

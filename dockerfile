@@ -16,7 +16,5 @@ RUN pip install apache-flink==1.17.0 "pymongo[srv]" requests kafka-python conflu
 
 WORKDIR /opt/flink/etl_app
 
-COPY config.json .
-COPY rules_plan.json .
-
+COPY config/ ./config/
 COPY src/ ./src/

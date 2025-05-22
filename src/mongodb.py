@@ -1,23 +1,27 @@
 from pymongo import MongoClient
 from typing import Dict, Any, Optional, Union
 from datetime import datetime
+from helpers import load_config
+import os
 
-MONGO_URI = "mongodb://root:password@mongo:27017"
-SCHEMA_DB = "etl_registry"
-SCHEMA_COLLECTION = "schema_registry"
-APP_DATA_COLLECTION = "etl_result"
+config_path = os.environ.get("CONFIG_PATH", "/opt/flink/etl_app/config/config.json")
+mongo_uri = os.environ.get("MONGO_URI", "mongodb://root:password@mongo:27017")
+config = load_config(config_path)
+database = config["database"] 
+schema_collection = config["schema_collection"]
+schema_collection = config["schema_collection"]
 
 def save_schema_to_mongo(source: str, version: int, schema: Dict[str, Any]) -> None:
-    client = MongoClient(MONGO_URI)
-    db = client[SCHEMA_DB]
-    collection = db[SCHEMA_COLLECTION]
+    client = MongoClient(mongo_uri)
+    db = client[database]
+    collection = db[schema_collection]
     collection.update_one({"source": source, "version": version}, {"$set": {"schema": schema}}, upsert=True)
     client.close()
 
 def load_schema_from_mongo(source: str, version: Optional[int] = None) -> Dict[str, Any]:
-    client = MongoClient(MONGO_URI)
-    db = client[SCHEMA_DB]
-    collection = db[SCHEMA_COLLECTION]
+    client = MongoClient(mongo_uri)
+    db = client[database]
+    collection = db[schema_collection]
     if version is None:
         doc = collection.find({"source": source}).sort("version", -1).limit(1)
     else:
@@ -28,9 +32,9 @@ def load_schema_from_mongo(source: str, version: Optional[int] = None) -> Dict[s
         raise ValueError(f"No schema found for source={source} version={version}")
     return schema_doc["schema"]
 
-def insert_into_mongo(data: dict, collection_name: str, database_name: str = APP_DATA_COLLECTION ) -> Union[None, Exception]:
+def insert_into_mongo(data: dict, collection_name: str, database_name: str = schema_collection ) -> Union[None, Exception]:
     try:
-        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
         client.admin.command("ping")
         db = client[database_name]
         collection = db[collection_name]
@@ -42,5 +46,4 @@ def insert_into_mongo(data: dict, collection_name: str, database_name: str = APP
     except Exception as e:
         print(f"MongoDB insert failed: {e}")
         return e
-
 
