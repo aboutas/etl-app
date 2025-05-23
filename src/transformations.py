@@ -54,7 +54,6 @@ class Transformations:
                 transformed[key] = value # untouched
         return transformed, False
 
-
     # Data Transformation
     @staticmethod
     def type_conversion(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
@@ -143,3 +142,4 @@ class Transformations:
             else:
                 transformed[key] = value
         return transformed, False
+
