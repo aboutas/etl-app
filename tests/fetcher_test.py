@@ -5,17 +5,17 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-# if __name__ == "__main__":
-#     try:
+if __name__ == "__main__":
+    try:
         
-#         config = load_config()
-#         url = config.get("url")
-#         api_key = config.get("api_key")
+        config = load_config()
+        url = config.get("url")
+        api_key = config.get("api_key")
 
-#         fetched_data = fetch_data_from_api(url, api_key)
-#         print(fetched_data)
+        fetched_data = fetch_data_from_api(url, api_key)
+        print(fetched_data)
 
-#         logging.info("Reading from API")
+        logging.info("Reading from API")
 
-#     except Exception as e:
-#         logging.error(f"Failed to execute pipeline: {e}")
+    except Exception as e:
+        logging.error(f"Failed to execute pipeline: {e}")

@@ -30,7 +30,6 @@ class Transformer(MapFunction):
             applied_rules = []
 
             execution_order = rule_execution_order.rule_exectution_order()
-
             schema = load_schema_from_mongo(topic)
             expected_fields = schema.get("fields", [])
 
@@ -39,33 +38,46 @@ class Transformer(MapFunction):
 
             for rule in execution_order:
                 found = False
-                # Search for rule in all rule categories
                 for category, transformations in self.selected_rules.items():
                     if rule in transformations and rule in self.rules_registry.get(category, {}):
                         func = self.rules_registry[category][rule]
+
+                        # --- Special handling for renaming_columns ---
+                        if rule == "renaming_columns":
+                            params = transformations[rule]
+                            fields = params["fields"]
+                            rename_map = params["rename_map"]
+                            valid_fields = [f for f in fields if f in output_data and f in expected_fields]
+                            if valid_fields and rename_map:
+                                found = True
+                                t_start = time.time()
+                                transformed, _ = func(output_data, valid_fields, rename_map)
+                                output_data = transformed
+                                t_end = time.time()
+                                applied_rules.append(f"{category}.{rule} ({', '.join(valid_fields)})")
+                                transformation_times.append(f"{rule}: {t_end - t_start:.4f} sec")
+                                print("Rule:", rule, "| Fields:", fields, "| Valid fields:", valid_fields)
+                            continue
+
                         fields = transformations[rule]
                         valid_fields = [f for f in fields if f in output_data and f in expected_fields]
                         if valid_fields:
                             found = True
                             t_start = time.time()
-                            transformed, _ = func(output_data, valid_fields)
-
                             # --- Special handling ---
+                            if rule == "concatination":
+                                transformed, _ = func(output_data, valid_fields, " ")
+                            else:
+                                transformed, _ = func(output_data, valid_fields)
+
                             if rule == "range_checks":
-                                # If *any* field was removed by range_checks, SKIP all further transforms
                                 if not all(f in transformed for f in valid_fields):
                                     log_message(1, f"Range check failed: {valid_fields}, skipping record.")
                                     log_data = log_applied_rules(input_id, applied_rules, transformation_times)
                                     insert_into_mongo(flatten_dict(log_data), log_data_collection)
-                                    return None  # Or return json.dumps({"skipped": "range_check_failed", "id": input_id})
+                                    return None
 
-                            # For aggregation functions, only add the new field(s)
-                            elif rule == "summarization":
-                                # Summarization should return {"sum_value": ...} or similar
-                                for k, v in transformed.items():
-                                    if k not in output_data:
-                                        output_data[k] = v
-                            elif rule == "concatination":
+                            elif rule == "summarization" or rule == "concatination":
                                 for k, v in transformed.items():
                                     if k not in output_data:
                                         output_data[k] = v
@@ -76,17 +88,14 @@ class Transformer(MapFunction):
                             applied_rules.append(f"{category}.{rule} ({', '.join(valid_fields)})")
                             transformation_times.append(f"{rule}: {t_end - t_start:.4f} sec")
                             print("Rule:", rule, "| Fields:", fields, "| Valid fields:", valid_fields)
-
-                # Optionally log missing rules
                 if not found:
-                    pass  # Or log_message(1, f"Rule {rule} not found in selected_rules.")
+                    pass
 
             log_message(self.verbose, f"Total map() execution: {time.time() - start_time:.4f} sec")
 
             log_data = log_applied_rules(input_id, applied_rules, transformation_times)
             insert_into_mongo(flatten_dict(log_data), log_data_collection)
             insert_into_mongo(output_data, app_data_collection)
-
             return json.dumps(output_data)
 
         except Exception as e:
@@ -95,5 +104,6 @@ class Transformer(MapFunction):
             error_log = log_applied_rules("ERROR", [error_msg], {})
             insert_into_mongo(error_log, log_data_collection)
             return json.dumps({"error": str(e), "id": input_data.get("id", "UNKNOWN")})
+
 
 

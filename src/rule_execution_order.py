@@ -6,9 +6,10 @@ def rule_exectution_order()  -> List[str] :
                             "capitalization_rules",
                             "str_to_float",
                             "trimming",
-                            "date_extraction",
+                            "year_extraction",
                             "increment_value",     
                             "data_masking",
                             "summarization",       
-                            "concatination" ]                                    
+                            "concatination", 
+                            "renaming_columns"]                            
     return execution_order 

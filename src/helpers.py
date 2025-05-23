@@ -2,7 +2,6 @@ from pymongo import MongoClient
 from typing import Any, Callable
 import json, time
 
-
 def initialize_rules() -> dict[str, dict[str, Callable]]:
     from transformations import Transformations  # Local import avoids circular import issues
 
@@ -18,7 +17,7 @@ def initialize_rules() -> dict[str, dict[str, Callable]]:
             "str_to_float": Transformations.str_to_float,
             "increment_value": Transformations.increment_value,    
             "trimming": Transformations.trimming,
-            "date_extraction": Transformations.date_extraction,
+            "year_extraction": Transformations.year_extraction,
         },
         "data_aggregation": {
             "summarization": Transformations.summarization,
@@ -27,8 +26,10 @@ def initialize_rules() -> dict[str, dict[str, Callable]]:
         "anonymization": {
             "data_masking": Transformations.data_masking,
         },
+        "data_standardization": {
+            "renaming_columns" : Transformations.renaming_columns
+        }        
     }
-
 
 def extract_id(input_data: dict) -> tuple[str, Any]:
     id_keys = [key for key in input_data.keys() if "id" in key.lower()]

@@ -1,10 +1,9 @@
 import re
 from typing import Dict, List, Tuple
-from datetime import datetime
-from dateutil import parser as dateparser
+from dateutil.parser import parse as dt_parse
 
-class Transformations:
-   
+
+class Transformations:   
 ##Order 1 | If this rule exists have to execute first. If value out of range, no other transformations has to implemet on this record
     # Data Validation  
     @staticmethod
@@ -51,20 +50,16 @@ class Transformations:
                 transformed[key] = value
         return transformed, False
 
-    # Time Transformations
     @staticmethod
     def trimming(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
         for key, value in data.items():
             if key in fields and isinstance(value, str):
                 val = value.strip()
-                # Try to parse date in any common format
                 try:
-                    parsed = dateparser.parse(val)
-                    if parsed:
-                        transformed[key] = parsed.strftime("%Y/%m/%d")
-                    else:
-                        transformed[key] = val
+                    parsed = dt_parse(val)
+                    # Output as YYYY/MM/DD
+                    transformed[key] = parsed.strftime("%Y/%m/%d")
                 except Exception:
                     transformed[key] = val
             else:
@@ -72,20 +67,17 @@ class Transformations:
         return transformed, False
 
     @staticmethod
-    def date_extraction(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
+    def year_extraction(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         transformed = {}
         for key, value in data.items():
             if key in fields and isinstance(value, str):
                 try:
-                    parsed = dateparser.parse(value)
-                    if parsed:
-                        transformed[f"{key}_year"] = str(parsed.year)
+                    parsed = dt_parse(value)
+                    transformed[f"{key}_year"] = str(parsed.year)
                 except Exception:
-                    pass
+                    pass  # If not a date, skip
         return transformed, False
 
-
-    #New for testing alongside summarization fro ordering execution
     @staticmethod
     def increment_value(data: Dict, fields: List[str], increment: float = 1) -> Tuple[Dict, bool]:
         """
@@ -110,26 +102,34 @@ class Transformations:
             else:
                 transformed[key] = value
         return transformed, False
+    
+    #data_standardization
+    @staticmethod
+    def renaming_columns(data: Dict, fields: List[str], rename_map: Dict[str, str]) -> Tuple[Dict, bool]:
+        transformed = {}
+        for key, value in data.items():
+            if key in fields and key in rename_map:
+                transformed[rename_map[key]] = value
+            elif key not in fields:
+                transformed[key] = value
+        return transformed, False
 
 ## Order 3. Transformations combining tuples | create a new column for aggregation_result. (maybe on map?)
     # Data Aggregation 
     @staticmethod
     def summarization(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
+        """
+        Sums all numeric values of specified fields and returns a single new field: sum_<fields...>
+        Example: summarization(data, ["a", "b"]) => {"sum_a_b": value}
+        """
         total = 0
-        valid = False
         for key in fields:
             value = data.get(key)
             if isinstance(value, (int, float)):
                 total += value
-                valid = True
-        # Only add the field if at least one valid number found
-        result = data.copy()
-        if valid:
-            result["total_sum"] = total
-        return result, False
-
+        sum_field = "sum_" + "_".join(fields)
+        return {sum_field: total}, False
     
-    #New for testing alongside lower-upper rules fro ordering execution
     @staticmethod
     def concatination(data: Dict, fields: List[str], sep: str = " ") -> Tuple[Dict, bool]:
         """
@@ -143,4 +143,6 @@ class Transformations:
         transformed = data.copy()
         transformed[concat_field] = result
         return transformed, False
+
+
 

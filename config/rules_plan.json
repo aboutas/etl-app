@@ -1,15 +1,23 @@
 {
   "data_validation": {
-    "range_checks": ["id"]},
+    "range_checks": ["id"]
+  },
   "data_cleaning": {
     "lower_case": ["name", "country.name", "owner.name"],
-    "capitalization_rules": ["isMobile"]},
+    "capitalization_rules": ["sensors.name"]
+  },
   "anonymization": {
-    "data_masking": ["id", "owner.id", "country.id"]},
+    "data_masking": ["id", "owner.id", "country.id"]
+  },
   "time_transformations": {
-      "trimming": ["datetimeFirst.utc", "datetimeFirst.local"],
-      "date_extraction": ["datetimeFirst.utc"]},
+    "trimming": ["datetimeFirst.utc", "datetimeFirst.local"],
+    "year_extraction": ["datetimeFirst.utc"]
+  },
   "data_aggregation": {
-      "summarization": ["licenses.id", "sensors.id"],
-      "concatination": ["name", "locality"]}
+    "summarization": ["sensors.id", "instruments.id"],
+    "concatination": ["name", "locality"]
+  },
+  "data_standardization": {
+  "renaming_columns": {"fields": ["timezone"], "rename_map": {"timezone": "zoniwras"}}
+  }
 }
