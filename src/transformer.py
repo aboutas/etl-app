@@ -1,6 +1,6 @@
 from pyflink.datastream.functions import MapFunction
-import json, time
-from helpers import initialize_rules, log_message, extract_id, log_applied_rules, flatten_dict
+import json, time, os
+from helpers import initialize_rules, log_message, extract_id, log_applied_rules, flatten_dict, load_config
 from mongodb import insert_into_mongo, load_schema_from_mongo
 
 class Transformer(MapFunction):
@@ -13,6 +13,10 @@ class Transformer(MapFunction):
         
     def map(self, value: str) -> str:
         try:
+            config_path = os.environ.get("CONFIG_PATH")
+            config = load_config(config_path)
+            topic = config.get("topic")
+
             start_time = time.time()
             transformation_times = []
 
@@ -22,7 +26,7 @@ class Transformer(MapFunction):
             applied_rules = []
 
             
-            schema = load_schema_from_mongo("open_aq_data")
+            schema = load_schema_from_mongo(topic)
             expected_fields = schema.get("fields", [])
 
             id_key, input_id = extract_id(input_data)

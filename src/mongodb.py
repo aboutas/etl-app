@@ -9,7 +9,7 @@ mongo_uri = os.environ.get("MONGO_URI", "mongodb://root:password@mongo:27017")
 config = load_config(config_path)
 database = config["database"] 
 schema_collection = config["schema_collection"]
-schema_collection = config["schema_collection"]
+app_data_collection = config["app_data_collection"]
 
 def save_schema_to_mongo(source: str, version: int, schema: Dict[str, Any]) -> None:
     client = MongoClient(mongo_uri)
@@ -36,7 +36,7 @@ def insert_into_mongo(data: dict, collection_name: str, database_name: str = sch
     try:
         client = MongoClient(mongo_uri)
         client.admin.command("ping")
-        db = client[database_name]
+        db = client[app_data_collection]
         collection = db[collection_name]
         data["ingested_at"] = datetime.now().isoformat()
 
