@@ -12,7 +12,7 @@ ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
 
 # Install PyFlink, Mongo, requests, kafka libs
-RUN pip install apache-flink==1.17.0 "pymongo[srv]" requests kafka-python confluent-kafka
+RUN pip install apache-flink==1.17.0 "pymongo[srv]" requests kafka-python confluent-kafka python-dateutil
 
 WORKDIR /opt/flink/etl_app
 

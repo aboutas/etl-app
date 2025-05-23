@@ -32,11 +32,11 @@ def load_schema_from_mongo(source: str, version: Optional[int] = None) -> Dict[s
         raise ValueError(f"No schema found for source={source} version={version}")
     return schema_doc["schema"]
 
-def insert_into_mongo(data: dict, collection_name: str, database_name: str = schema_collection ) -> Union[None, Exception]:
+def insert_into_mongo(data: dict, collection_name: str ) -> Union[None, Exception]:
     try:
         client = MongoClient(mongo_uri)
         client.admin.command("ping")
-        db = client[app_data_collection]
+        db = client[database]
         collection = db[collection_name]
         data["ingested_at"] = datetime.now().isoformat()
 

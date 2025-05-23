@@ -1,18 +1,15 @@
 {
+  "data_validation": {
+    "range_checks": ["id"]},
   "data_cleaning": {
-    "standardize_format": ["name", "country.name", "owner.name"]},
-  
+    "lower_case": ["name", "country.name", "owner.name"],
+    "capitalization_rules": ["isMobile"]},
   "anonymization": {
-    "data_masking": ["id", "owner.id", "country.id"]
-  },
-  "data_standardization": {
-    "capitalization_rules": ["ismobile"]
-  },
-  "text_manipulation": {
-    "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
-  }
+    "data_masking": ["id", "owner.id", "country.id"]},
+  "time_transformations": {
+      "trimming": ["datetimeFirst.utc", "datetimeFirst.local"],
+      "date_extraction": ["datetimeFirst.utc"]},
+  "data_aggregation": {
+      "summarization": ["licenses.id", "sensors.id"],
+      "concatination": ["name", "locality"]}
 }
-
-
-
-

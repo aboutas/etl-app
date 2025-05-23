@@ -6,5 +6,6 @@
     "topic"   : "openaq-data-locations",
     "database" : "registry_locations",
     "schema_collection" : "locations_schema_registry",
-    "app_data_collection" : "locations_data"
+    "app_data_collection" : "locations_data",
+    "log_data_collection" : "locations_logs"
 }

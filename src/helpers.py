@@ -4,37 +4,31 @@ import json, time
 
 
 def initialize_rules() -> dict[str, dict[str, Callable]]:
-    from transformations import Transformations  # local import to avoid circular issues
+    from transformations import Transformations  # Local import avoids circular import issues
+
     return {
-        "data_cleaning": {
-            "standardize_format": Transformations.standardize_format
-        },
-        "data_aggregation": {
-            "summarization": Transformations.summarization
-        },
-        "data_standardization": {
-            "renaming_columns": Transformations.renaming_columns,
-            "capitalization_rules": Transformations.capitalization_rules
-        },
         "data_validation": {
-            "range_checks": Transformations.range_checks
+            "range_checks": Transformations.range_checks,
+        },
+        "data_cleaning": {
+            "lower_case": Transformations.lower_case,
+            "capitalization_rules": Transformations.capitalization_rules,
         },
         "data_transformation": {
-            "type_conversion": Transformations.type_conversion,
-            "normalization": Transformations.normalization,
-            "denormalization": Transformations.denormalization
-        },
-        "text_manipulation": {
+            "str_to_float": Transformations.str_to_float,
+            "increment_value": Transformations.increment_value,    
             "trimming": Transformations.trimming,
-            "regex_operations": Transformations.regex_operations
+            "date_extraction": Transformations.date_extraction,
         },
-        "time_transformations": {
-            "date_extraction": Transformations.date_extraction
+        "data_aggregation": {
+            "summarization": Transformations.summarization,
+            "concatination": Transformations.concatination,        
         },
         "anonymization": {
-            "data_masking": Transformations.data_masking
-        }
+            "data_masking": Transformations.data_masking,
+        },
     }
+
 
 def extract_id(input_data: dict) -> tuple[str, Any]:
     id_keys = [key for key in input_data.keys() if "id" in key.lower()]
