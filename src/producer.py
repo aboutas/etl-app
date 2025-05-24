@@ -13,21 +13,6 @@ if __name__ == "__main__":
     api_key = config["api_key"]
     topic = config["topic"]
 
-    # def wait_for_kafka(host, port, timeout=60):
-    #     start = time.time()
-    #     while time.time() - start < timeout:
-    #         try:
-    #             s = socket.create_connection((host, port), timeout=2)
-    #             s.close()
-    #             print("Kafka broker is up!")
-    #             return
-    #         except OSError:
-    #             print("Waiting for Kafka...")
-    #             time.sleep(2)
-    #     raise RuntimeError("Kafka did not start in time!")
-
-
-    # wait_for_kafka("kafka", 9092)
     producer = KafkaProducer(bootstrap_servers="kafka:9092", value_serializer=lambda v: json.dumps(v).encode("utf-8"))
     data = fetch_data_from_api(url, api_key)
 

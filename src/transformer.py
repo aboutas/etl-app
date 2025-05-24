@@ -41,8 +41,6 @@ class Transformer(MapFunction):
                 for category, transformations in self.selected_rules.items():
                     if rule in transformations and rule in self.rules_registry.get(category, {}):
                         func = self.rules_registry[category][rule]
-
-                        # --- Special handling for renaming_columns ---
                         if rule == "renaming_columns":
                             params = transformations[rule]
                             fields = params["fields"]
@@ -64,7 +62,6 @@ class Transformer(MapFunction):
                         if valid_fields:
                             found = True
                             t_start = time.time()
-                            # --- Special handling ---
                             if rule == "concatination":
                                 transformed, _ = func(output_data, valid_fields, " ")
                             else:
