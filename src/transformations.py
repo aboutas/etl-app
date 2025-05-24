@@ -131,14 +131,14 @@ class Transformations:
         return {sum_field: total}, False
     
     @staticmethod
-    def concatination(data: Dict, fields: List[str], sep: str = " ") -> Tuple[Dict, bool]:
+    def concatenation(data: Dict, fields: List[str], sep: str = " ") -> Tuple[Dict, bool]:
         """
         Concatenate specified fields into a new field called 'concat_result' (or customize as needed).
         Example: concatination(data, ["first_name", "last_name"]) => data["concat_result"] = "John Doe"
         """
         values = [str(data.get(key, "")) for key in fields]
         result = sep.join(values)
-        # Add to result dict (could customize the result field name)
+        
         concat_field = "concat_" + "_".join(fields)
         transformed = data.copy()
         transformed[concat_field] = result

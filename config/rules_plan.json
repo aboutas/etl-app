@@ -15,7 +15,7 @@
   },
   "data_aggregation": {
     "summarization": ["sensors.id", "instruments.id"],
-    "concatination": ["name", "locality"]
+    "concatenation": ["name", "locality"]
   },
   "data_standardization": {
   "renaming_columns": {"fields": ["timezone"], "rename_map": {"timezone": "zoniwras"}}

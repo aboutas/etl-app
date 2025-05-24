@@ -21,7 +21,7 @@ def initialize_rules() -> dict[str, dict[str, Callable]]:
         },
         "data_aggregation": {
             "summarization": Transformations.summarization,
-            "concatination": Transformations.concatination,        
+            "concatenation": Transformations.concatenation,        
         },
         "anonymization": {
             "data_masking": Transformations.data_masking,

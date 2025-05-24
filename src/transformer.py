@@ -62,7 +62,7 @@ class Transformer(MapFunction):
                         if valid_fields:
                             found = True
                             t_start = time.time()
-                            if rule == "concatination":
+                            if rule == "concatenation":
                                 transformed, _ = func(output_data, valid_fields, " ")
                             else:
                                 transformed, _ = func(output_data, valid_fields)
@@ -74,7 +74,7 @@ class Transformer(MapFunction):
                                     insert_into_mongo(flatten_dict(log_data), log_data_collection)
                                     return None
 
-                            elif rule == "summarization" or rule == "concatination":
+                            elif rule == "summarization" or rule == "concatenation":
                                 for k, v in transformed.items():
                                     if k not in output_data:
                                         output_data[k] = v

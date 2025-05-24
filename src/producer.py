@@ -4,7 +4,6 @@ from helpers import load_config
 from api_client import fetch_data_from_api
 from schema_handler import schema_registry
 from time import time
-import socket
 
 if __name__ == "__main__":
     config_path = os.environ.get("CONFIG_PATH", "/opt/flink/etl_app/config/config.json")
