@@ -115,7 +115,7 @@ curl.exe -X POST http://localhost:8080/submit_config ^
 * Values are the fields (dot notation supports nested JSON)
 
 ## Extending: Add a New Transformation
-*Implement your function in transformations.py
+* Implement your function in transformations.py
 
 * Register it in the transformation registry
 
