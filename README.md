@@ -21,7 +21,7 @@ Config management is handled via a Flask API: simply POST your config and rules,
   - Stores results and a log/history of applied transformations per record
 - **Schema tracking**:
   - Auto-infers JSON schema from data, versions tracked in MongoDB
-- **Dockerized**: Spin up all dependencies—MongoDB, Kafka, Zookeeper, and your apps—with a single command
+- **Dockerized**: Spin up all dependencies
 ---
 
 ## Setup & Running
@@ -82,18 +82,18 @@ This starts:
 }
 ```
 * Post with curl (Windows example):
-''' bash
+``` bash
 curl.exe -X POST http://localhost:8080/submit_config ^
   -H "Content-Type: application/json" ^
   -d "@C:\path\to\config_and_rules.json"
-'''
+```
 
 ### 5. Browse the data
 
 * Results and logs are available in your configured MongoDB collections.
 
 * Transformation Rule Plan Example
-''' json
+``` json
 {
   "data_cleaning": {
     "lower_case": ["name", "country.name", "owner.name"]
@@ -108,7 +108,7 @@ curl.exe -X POST http://localhost:8080/submit_config ^
     "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
   }
 }
-'''
+```
 
 * Keys are transformation categories and method names (must match those in transformations.py)
 
