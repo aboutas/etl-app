@@ -1,63 +1,27 @@
-<!-- # Dynamic Mapping Solution for ETL Source and Destination
-This project offers a proposed solution to the problem of dynamic mapping in both the source and destination stages of ETL processes.
-
-The solution accepts a JSON input file, simulating various schemas that may be loaded into the ETL pipeline. A custom schema registry handles schema management, allowing flexible adjustments based on the data structure dynamically (source dynamic mapping).
-
-The data processed includes metrics like temperature. When fields for "heating cost" and "currency" are present, an additional column, "heating cost in euros," is calculated based on currency exchange rates (destination mapping). This feature allows for seamless integration and transformation of varying data schemas within the ETL process.
-
-# PROJECT STRUCTURE:
-
-* flink_code.py: Main script that sets up the Flink streaming environment, loads input data, applies transformations, and writes output to a JSON file.
-
-* schema_manager.py: Manages schema registration and retrieval to enable dynamic transformations based on different schema versions.
-
-* transform_rules_manager.py: Contains the transformation logic using lamda functions for processing input data based on the current schema.
-
-* input.json: Input file containing JSON records to be processed by the Flink job.
-
-* Dockerfile: The Dockerfile to build the environment, install dependencies, and execute the Flink job.
-
-# GETTING STARTED
-## Prerequisites
-* Docker: Ensure Docker is installed on your system.
-
-* Python 3.10: The Python version used in this project is 3.10. Docker will handle the installation of dependencies and environment setup.
-
-* Apache PyFlink: PyFlink is installed via pip inside the Docker container.
-
-
-## Build the Docker image: In the project directory, run:
-```
-build -t flink-job-image . 
-```
-
-## Run the Docker container: 
-After building the image, run the following command to execute the Flink job:
-```
-docker run --name flink-job-container -v C:/path_to_your_local_output_directory:/opt/flink/output flink-job-image
-```
-Note! : 
-Make sure to replace C:/path_to_your_local_output_directory with the absolute path of your local output directory. -->
 # ETL Streaming Pipeline: Open Data → Kafka → PyFlink → MongoDB
 
 ## Overview
-This project implements a flexible, streaming ETL (Extract, Transform, Load) pipeline in Python.  
-It ingests data from an open API, streams it through Kafka, applies dynamic transformation rules (supporting nested JSON), and stores both results and logs in MongoDB.
+This project implements a flexible, real-time ETL (Extract, Transform, Load) pipeline in Python.
+It ingests data from public REST APIs, streams it through Kafka, applies dynamic, user-defined transformation rules (with full nested JSON support), and stores both results and logs in MongoDB.
 
-The pipeline is modular, allowing users to adapt the rule plan, support new APIs, or extend transformation logic with ease.
+Config management is handled via a Flask API: simply POST your config and rules, and the system spins up streaming jobs for each new data source—no code or service restarts needed!
 
 ---
 
 ## Features
 
-- **Data ingestion** from any REST API (configured via `config.json`)
-- **Kafka streaming** (dockerized, ready for real-time or batch)
-- **Dynamic transformation** based on a rule plan (`rules_plan.json`)
-- **Nested JSON support** with dotted notation (e.g., `country.name`)
-- **MongoDB persistence**: both results and a log/history of applied rules
-- **Schema handling**: auto-inferred from the API input, tracked per source/version
-- **Dockerized**: Easily spin up MongoDB, Kafka, Zookeeper, and your app(s) with Docker Compose
-
+- **REST API ingestion**: Pulls data from any REST endpoint (API, configurable)
+- **Dynamic rules**: Users upload configs/rule plans via an HTTP endpoint (no file editing needed)
+- **Multi-user / multi-job**: The pipeline can process multiple independent configs and rules in parallel
+- **Kafka streaming**: Modern, robust data transport
+- **Flexible transformation engine**: 
+  - Rules defined per field (including nested fields, dot notation: `owner.name`)
+  - Easily add new transformations in `transformations.py`
+- **MongoDB persistence**:
+  - Stores results and a log/history of applied transformations per record
+- **Schema tracking**:
+  - Auto-infers JSON schema from data, versions tracked in MongoDB
+- **Dockerized**: Spin up all dependencies—MongoDB, Kafka, Zookeeper, and your apps—with a single command
 ---
 
 ## Setup & Running
@@ -69,39 +33,93 @@ cd etl-app
 ```
 
 ### 2 Configure
-* Edit config.json with your API endpoint, keys, Mongo details, etc.
+* (Optional) Adjust default config.json in /config for reference.
 
-* Edit rules_plan.json to define your transformation rules (see below).
+* You will submit configs and rules via the API endpoint after startup—no need to edit files for new jobs!
 
 
 ### 3. Build & Start All Services
 ``` bash
 docker-compose up --build
 ```
-* Starts MongoDB, Kafka, Zookeeper, producer, and consumer containers.
+This starts:
+* MongoDB
 
-### 4. See the Data
-Browse results in MongoDB
+* Kafka & Zookeeper
 
-## Rule Plan Example (rules_plan.json)
+* Producer, Consumer, and Manager (Flask API) containers
+
+### 4. Submit Your Configs and Rules
+* POST a JSON payload to the Manager API to launch an ETL pipeline for each new data source.
+* Example (config_and_rules.json)
 ```json 
 {
-  "data_cleaning": {
-    "standardize_format": ["name", "country.name", "owner.name"],
-    "data_masking": ["id", "owner.id"]
+  "config": {
+    "url": "https://api.openaq.org/v3/locations",
+    "api_key": "YOUR_API_KEY",
+    "topic": "openaq-data-locations",
+    "database": "registry_locations",
+    "schema_collection": "locations_schema_registry",
+    "app_data_collection": "locations_data",
+    "log_data_collection": "locations_logs",
+    "mongo_uri": "mongodb://root:password@mongo:27017",
+    "verbosity": 0
   },
-  "text_manipulation": {
-    "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
+  "rules_plan": {
+    "data_cleaning": {
+      "lower_case": ["name", "owner.name"]
+    },
+    "data_standardization": {
+      "renaming_columns": {"fields": ["timezone"], "rename_map": {"timezone": "zoniwras"}}
+    },
+    "data_aggregation": {
+      "summarization": ["sensors.id", "instruments.id"]
+    },
+    "time_transformations": {
+      "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
+    }
   }
 }
 ```
+* Post with curl (Windows example):
+''' bash
+curl.exe -X POST http://localhost:8080/submit_config ^
+  -H "Content-Type: application/json" ^
+  -d "@C:\path\to\config_and_rules.json"
+'''
 
-* Keys are transformation categories and methods
+### 5. Browse the data
 
-* Values are fields to apply them on (dot notation for nested fields)
+* Results and logs are available in your configured MongoDB collections.
 
-## Adding a New Transformation
-* Add your logic in transformations.py
-* Register it in the transformation registry 
-* Add to your rule plan!
+* Transformation Rule Plan Example
+''' json
+{
+  "data_cleaning": {
+    "lower_case": ["name", "country.name", "owner.name"]
+  },
+  "anonymization": {
+    "data_masking": ["id", "owner.id", "country.id"]
+  },
+  "data_aggregation": {
+    "summarization": ["sensors.id", "instruments.id"]
+  },
+  "time_transformations": {
+    "trimming": ["datetimeFirst.utc", "datetimeFirst.local"]
+  }
+}
+'''
 
+* Keys are transformation categories and method names (must match those in transformations.py)
+
+* Values are the fields (dot notation supports nested JSON)
+
+## Extending: Add a New Transformation
+*Implement your function in transformations.py
+
+* Register it in the transformation registry
+
+* Add it to your rules plan and POST via the API
+
+## Next Steps
+* Web UI: The system is ready to add a simple web interface for uploading configs/rules, monitoring jobs, etc.

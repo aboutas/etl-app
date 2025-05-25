@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from helpers import flatten_dict
-from mongodb import save_schema_to_mongo
+from mongodb import save_schema_to_mongo  # Ensure this expects a config param
 
 class SchemaHandler:
     def __init__(self):
@@ -13,13 +13,16 @@ class SchemaHandler:
         versions = [k[1] for k in self.schemas if k[0] == source]
         return max(versions) + 1 if versions else 1
 
-    def handle_schema_from_input(self,data: list[dict], source: str) -> int:
+    def handle_schema_from_input(self, data: list[dict], source: str, config: Dict) -> int:
+        """
+        Handles schema extraction and saving.
+        Passes `config` dict to save_schema_to_mongo for proper DB/collection routing.
+        """
         flattened_sample = flatten_dict(data[0])
         schema = {'fields': list(flattened_sample.keys())}
         version = self.get_next_version(source)
         self.register_schema(source, version, schema)
-        save_schema_to_mongo(source, version, schema)
+        save_schema_to_mongo(source, version, schema, config)  
         return version
 
 schema_registry = SchemaHandler()
-

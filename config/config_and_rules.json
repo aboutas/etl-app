@@ -1,0 +1,23 @@
+{
+  "config": { 
+      "verbosity" : 0,
+        "url" : "https://api.openaq.org/v3/locations",
+        "api_key" : "b8348f18c35d42a8544d1b350ecfc7a89c28217032e6d9b0988084bac1145ff9",
+        "topic"   : "openaq-data-locations",
+        "mongo_uri": "mongodb://root:password@mongo:27017",
+        "database" : "registry_locations",
+        "schema_collection" : "locations_schema_registry",
+        "app_data_collection" : "locations_data",
+        "log_data_collection" : "locations_logs" 
+    },
+   "rules_plan": { 
+      "data_validation": {"range_checks": ["id"]},
+    "data_cleaning": {"lower_case": ["name", "country.name", "owner.name"],"capitalization_rules": ["sensors.name"]},
+    "anonymization": {"data_masking": ["id", "owner.id", "country.id"]},
+    "time_transformations": {"trimming": ["datetimeFirst.utc", "datetimeFirst.local"],"year_extraction": ["datetimeFirst.utc"]},
+    "data_aggregation": {"summarization": ["sensors.id", "instruments.id"],"concatenation": ["name", "locality"]},
+    "data_standardization": {"renaming_columns": {"fields": ["timezone"], "rename_map": {"timezone": "zoniwras"}}}
+  }
+}
+
+

@@ -1,0 +1,18 @@
+{
+  "config": { 
+      "verbosity" : 0,
+        "url" : "https://api.openaq.org/v3/instruments",
+        "api_key" : "b8348f18c35d42a8544d1b350ecfc7a89c28217032e6d9b0988084bac1145ff9",
+        "topic"   : "openaq-data-instruments",
+        "mongo_uri": "mongodb://root:password@mongo:27017",
+        "database" : "registry_instruments",
+        "schema_collection" : "instruments_schema_registry",
+        "app_data_collection" : "instruments_data",
+        "log_data_collection" : "instruments_logs" 
+    },
+   "rules_plan": { 
+        "data_cleaning": {"lower_case": ["name", "country.name", "owner.name"],"capitalization_rules": ["sensors.name"]}
+  }
+}
+
+

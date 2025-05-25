@@ -1,26 +1,23 @@
 from pyflink.datastream.functions import MapFunction
-import json, time, os
-from helpers import initialize_rules, log_message, extract_id, log_applied_rules, flatten_dict, load_config
+import json, time
+from helpers import initialize_rules, log_message, extract_id, log_applied_rules, flatten_dict
 from mongodb import insert_into_mongo, load_schema_from_mongo
 import rule_execution_order
 
 class Transformer(MapFunction):
-    def __init__(self, schema_manager, selected_rules, verbose: int = 0, schema_version: int = None):
+    def __init__(self, schema_manager, selected_rules, config, verbose: int = 0, schema_version: int = None):
         self.schema_manager = schema_manager
         self.rules_registry = initialize_rules()
         self.selected_rules = selected_rules
+        self.config = config  # <-- store config for this job
         self.verbose = verbose
         self.schema_version = schema_version
         
     def map(self, value: str) -> str:
         try:
-            import os
-            config_path = os.environ.get("CONFIG_PATH")
-            config = load_config(config_path)
-            topic = config.get("topic")
-            app_data_collection = config.get("app_data_collection")
-            log_data_collection = config.get("log_data_collection")
-
+            topic = self.config.get("topic")
+            app_data_collection = self.config.get("app_data_collection")
+            log_data_collection = self.config.get("log_data_collection")
             start_time = time.time()
             transformation_times = []
 
@@ -30,7 +27,7 @@ class Transformer(MapFunction):
             applied_rules = []
 
             execution_order = rule_execution_order.rule_exectution_order()
-            schema = load_schema_from_mongo(topic)
+            schema = load_schema_from_mongo(topic, self.config)
             expected_fields = schema.get("fields", [])
 
             id_key, input_id = extract_id(input_data)
@@ -71,7 +68,7 @@ class Transformer(MapFunction):
                                 if not all(f in transformed for f in valid_fields):
                                     log_message(1, f"Range check failed: {valid_fields}, skipping record.")
                                     log_data = log_applied_rules(input_id, applied_rules, transformation_times)
-                                    insert_into_mongo(flatten_dict(log_data), log_data_collection)
+                                    insert_into_mongo(flatten_dict(log_data), log_data_collection, self.config)
                                     return None
 
                             elif rule == "summarization" or rule == "concatenation":
@@ -91,16 +88,13 @@ class Transformer(MapFunction):
             log_message(self.verbose, f"Total map() execution: {time.time() - start_time:.4f} sec")
 
             log_data = log_applied_rules(input_id, applied_rules, transformation_times)
-            insert_into_mongo(flatten_dict(log_data), log_data_collection)
-            insert_into_mongo(output_data, app_data_collection)
+            insert_into_mongo(flatten_dict(log_data), log_data_collection, self.config)
+            insert_into_mongo(output_data, app_data_collection, self.config)
             return json.dumps(output_data)
 
         except Exception as e:
             error_msg = f"Error processing record: {e}"
             log_message(1, error_msg)
             error_log = log_applied_rules("ERROR", [error_msg], {})
-            insert_into_mongo(error_log, log_data_collection)
+            insert_into_mongo(error_log, self.config.get("log_data_collection", "transformation_logs"), self.config)
             return json.dumps({"error": str(e), "id": input_data.get("id", "UNKNOWN")})
-
-
-
