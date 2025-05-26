@@ -9,7 +9,7 @@ class Transformer(MapFunction):
         self.schema_manager = schema_manager
         self.rules_registry = initialize_rules()
         self.selected_rules = selected_rules
-        self.config = config  # <-- store config for this job
+        self.config = config  
         self.verbose = verbose
         self.schema_version = schema_version
         

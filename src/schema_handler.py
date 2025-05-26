@@ -1,6 +1,6 @@
 from typing import Any, Dict
 from helpers import flatten_dict
-from mongodb import save_schema_to_mongo  # Ensure this expects a config param
+from mongodb import save_schema_to_mongo  
 
 class SchemaHandler:
     def __init__(self):

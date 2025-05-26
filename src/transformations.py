@@ -120,7 +120,6 @@ class Transformations:
     def summarization(data: Dict, fields: List[str]) -> Tuple[Dict, bool]:
         """
         Sums all numeric values of specified fields and returns a single new field: sum_<fields...>
-        Example: summarization(data, ["a", "b"]) => {"sum_a_b": value}
         """
         total = 0
         for key in fields:
@@ -134,7 +133,6 @@ class Transformations:
     def concatenation(data: Dict, fields: List[str], sep: str = " ") -> Tuple[Dict, bool]:
         """
         Concatenate specified fields into a new field called 'concat_result' (or customize as needed).
-        Example: concatination(data, ["first_name", "last_name"]) => data["concat_result"] = "John Doe"
         """
         values = [str(data.get(key, "")) for key in fields]
         result = sep.join(values)

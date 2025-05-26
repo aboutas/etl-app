@@ -33,5 +33,5 @@ if __name__ == "__main__":
         job = msg.value
         config = job["config"]
         rules_plan = job["rules_plan"]
-        # Each config handled in a new thread
+       
         threading.Thread(target=process_job, args=(config, rules_plan), daemon=True).start()
