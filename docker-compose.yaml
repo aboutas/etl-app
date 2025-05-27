@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongo:
     image: mongo:latest
@@ -39,43 +37,48 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  etl-manager:
+  flink-jobmanager:
+    build:
+      context: .
+      dockerfile: Dockerfile.flink-python
+    container_name: flink-jobmanager
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"    # Flink web UI
+    command: jobmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+    volumes:
+      - .:/opt/flink/etl_app
+
+  flink-taskmanager:
+    build:
+      context: .
+      dockerfile: Dockerfile.flink-python
+    container_name: flink-taskmanager
+    depends_on:
+      - flink-jobmanager
+    command: taskmanager
+    environment:
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: flink-jobmanager
+    volumes:
+      - .:/opt/flink/etl_app
+
+  config_client:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: etl-manager
+    container_name: config_client
     depends_on:
       - kafka
     ports:
       - "8080:8080"
-    command: ["python", "src/etl_manager.py"]
-    working_dir: /opt/flink/etl_app
-    volumes:
-      - .:/opt/flink/etl_app
-
-  etl-producer:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: etl-producer
-    depends_on:
-      - kafka
-    restart: on-failure
-    command: ["python", "src/producer.py"]
-    working_dir: /opt/flink/etl_app
-    volumes:
-      - .:/opt/flink/etl_app
-
-  etl-consumer:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: etl-consumer
-    depends_on:
-      - kafka
-      - mongo
-    restart: on-failure
-    command: ["python", "src/consumer.py"]
+    command: ["python", "src/config_client.py"]
     working_dir: /opt/flink/etl_app
     volumes:
       - .:/opt/flink/etl_app

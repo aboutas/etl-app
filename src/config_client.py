@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify
 from kafka import KafkaProducer
 import json
-#pythhonApp/Thread logic
+import os
+
 app = Flask(__name__)
 
-KAFKA_BROKER = "kafka:9092"
-CONFIG_TOPIC = "config_topic"
+KAFKA_BROKER = os.environ.get("KAFKA_BROKER", "kafka:9092")
+CONFIG_TOPIC = os.environ.get("CONFIG_TOPIC", "config_topic")
 
 def get_kafka_producer():
     return KafkaProducer(bootstrap_servers=KAFKA_BROKER, value_serializer=lambda v: json.dumps(v).encode("utf-8"))

@@ -2,6 +2,3 @@ curl.exe -X POST http://localhost:8080/submit_config -H "Content-Type: applicati
 
 curl.exe -X POST http://localhost:8080/submit_config -H "Content-Type: application/json" -d "@C:\Users\ampoutas\Documents\ETL\etl_app\config\config_test.json"
 
-
-
-
