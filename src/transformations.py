@@ -1,8 +1,7 @@
 import re
 from typing import Dict, List, Tuple
 from dateutil.parser import parse as dt_parse
-
-
+#pythhonApp/Thread logic
 class Transformations:   
 ##Order 1 | If this rule exists have to execute first. If value out of range, no other transformations has to implemet on this record
     # Data Validation  

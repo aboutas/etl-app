@@ -2,7 +2,7 @@
 from pymongo import MongoClient
 from typing import Dict, Any, Optional, Union
 from datetime import datetime
-
+#pythhonApp/Thread logic
 def get_mongo_client(mongo_uri: str) -> MongoClient:
     return MongoClient(mongo_uri)
 

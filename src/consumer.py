@@ -3,6 +3,8 @@ import json, threading
 from transformer import Transformer
 from schema_handler import schema_registry
 
+#pythhonApp/Thread logic
+
 CONFIG_TOPIC = "config_topic"
 KAFKA_BROKER = "kafka:9092"
 

@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from kafka import KafkaProducer
 import json
-
+#pythhonApp/Thread logic
 app = Flask(__name__)
 
 KAFKA_BROKER = "kafka:9092"

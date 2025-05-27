@@ -3,7 +3,7 @@ import json, time
 from helpers import initialize_rules, log_message, extract_id, log_applied_rules, flatten_dict
 from mongodb import insert_into_mongo, load_schema_from_mongo
 import rule_execution_order
-
+#pythhonApp/Thread logic
 class Transformer(MapFunction):
     def __init__(self, schema_manager, selected_rules, config, verbose: int = 0, schema_version: int = None):
         self.schema_manager = schema_manager

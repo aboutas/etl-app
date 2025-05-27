@@ -1,5 +1,5 @@
 from typing import List
-
+#pythhonApp/Thread logic
 def rule_exectution_order()  -> List[str] :
     execution_order = [    "range_checks",
                             "lower_case",

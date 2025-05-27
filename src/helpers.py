@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from typing import Any, Callable
 import json, time
-
+#pythhonApp/Thread logic
 def initialize_rules() -> dict[str, dict[str, Callable]]:
     from transformations import Transformations  # Local import avoids circular import issues
 

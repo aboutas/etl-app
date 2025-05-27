@@ -2,7 +2,7 @@ from kafka import KafkaConsumer, KafkaProducer
 import json, logging, threading
 from api_client import fetch_data_from_api
 from schema_handler import schema_registry
-
+#pythhonApp/Thread logic
 CONFIG_TOPIC = "config_topic"
 KAFKA_BROKER = "kafka:9092"
 
@@ -33,5 +33,5 @@ if __name__ == "__main__":
         job = msg.value
         config = job["config"]
         rules_plan = job["rules_plan"]
-       
+        # move on Flink's JOB. 
         threading.Thread(target=process_job, args=(config, rules_plan), daemon=True).start()
