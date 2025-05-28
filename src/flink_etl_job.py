@@ -6,21 +6,19 @@ from transformer import Transformer
 from schema_handler import schema_registry
 
 def main(config_path):
-    # Load config+rules (from one json for now)
     with open(config_path) as f:
         job = json.load(f)
         config = job["config"]
         rules_plan = job["rules_plan"]
 
     env = StreamExecutionEnvironment.get_execution_environment()
-    env.set_parallelism(1)  # Tune as needed
+    env.set_parallelism(1)  
 
     kafka_props = {
-        'bootstrap.servers': config.get("kafka_broker", "kafka:9092"),  # fallback to default
+        'bootstrap.servers': config.get("kafka_broker", "kafka:9092"),  
         'group.id': f'flink-etl-{config["topic"]}'
     }
 
-    # Add data source (Kafka topic with your data)
     consumer = FlinkKafkaConsumer(
         topics=config["topic"],
         deserialization_schema=SimpleStringSchema(),
@@ -34,17 +32,16 @@ def main(config_path):
             selected_rules=rules_plan,
             config=config
         )
-        return transformer.map(value)  # Returns JSON string
+        return transformer.map(value)  
 
     transformed = ds.map(flink_transform)
 
-    # Write to MongoDB inside map (calls your existing insert_into_mongo)
     from mongodb import insert_into_mongo
     def write_to_mongo(json_str):
         doc = json.loads(json_str)
         insert_into_mongo(doc, config["app_data_collection"], config)
-        return ""  # Flink needs a return
-
+        return ""  
+    
     transformed.map(write_to_mongo)
 
     env.execute(f"Flink ETL for {config['topic']}")
