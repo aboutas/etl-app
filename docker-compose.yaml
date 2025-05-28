@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   mongo:
     image: mongo:latest
@@ -37,48 +39,16 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  flink-jobmanager:
-    build:
-      context: .
-      dockerfile: Dockerfile.flink-python
-    container_name: flink-jobmanager
-    depends_on:
-      - kafka
-    ports:
-      - "8081:8081"    # Flink web UI
-    command: jobmanager
-    environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: flink-jobmanager
-    volumes:
-      - .:/opt/flink/etl_app
-
-  flink-taskmanager:
-    build:
-      context: .
-      dockerfile: Dockerfile.flink-python
-    container_name: flink-taskmanager
-    depends_on:
-      - flink-jobmanager
-    command: taskmanager
-    environment:
-      - |
-        FLINK_PROPERTIES=
-        jobmanager.rpc.address: flink-jobmanager
-    volumes:
-      - .:/opt/flink/etl_app
-
-  config_client:
+  flink-etl:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: config_client
+    container_name: flink-etl
     depends_on:
       - kafka
-    ports:
-      - "8080:8080"
-    command: ["python", "src/config_client.py"]
+      - mongo
+    command: >
+      bash -c "python3 src/flink_etl_job.py /opt/flink/etl_app/config/config_and_rules.json"
     working_dir: /opt/flink/etl_app
     volumes:
       - .:/opt/flink/etl_app

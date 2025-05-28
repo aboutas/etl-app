@@ -1,21 +1,24 @@
-# Use a slim Python base image
-FROM python:3.10-slim-bullseye
+# Start from the official PyFlink image
+FROM apache/flink:1.17.0-python
 
-# Install system dependencies and Java for PyFlink
-RUN pip install --no-cache-dir \
-    apache-flink==1.17.0 \
-    "pymongo[srv]" \
-    requests \
-    kafka-python \
-    confluent-kafka \
-    python-dateutil \
-    flask
+USER root
 
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
-ENV PATH=$JAVA_HOME/bin:$PATH
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3-pip \
+    python3-dev \
+    openjdk-11-jre-headless \
+    && rm -rf /var/lib/apt/lists/*
 
+# Install Python dependencies
+RUN pip install --upgrade pip && \
+    pip install pymongo requests kafka-python python-dateutil flask
+
+# Set up working directory
 WORKDIR /opt/flink/etl_app
 
-COPY config/ ./config/
+# Copy source code and configs
 COPY src/ ./src/
+COPY config/ ./config/
 
+ENV PYTHONPATH="/opt/flink/etl_app/src:$PYTHONPATH"
