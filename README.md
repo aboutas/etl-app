@@ -4,7 +4,7 @@
 This project implements a flexible, real-time ETL (Extract, Transform, Load) pipeline in Python.
 It ingests data from public REST APIs, streams it through Kafka, applies dynamic, user-defined transformation rules (with full nested JSON support), and stores both results and logs in MongoDB.
 
-Config management is handled via a Flask API: simply POST your config and rules, and the system spins up streaming jobs for each new data source—no code or service restarts needed!
+Config management is handled via a Flask API.
 
 ---
 
@@ -113,13 +113,3 @@ curl.exe -X POST http://localhost:8080/submit_config ^
 * Keys are transformation categories and method names (must match those in transformations.py)
 
 * Values are the fields (dot notation supports nested JSON)
-
-## Extending: Add a New Transformation
-* Implement your function in transformations.py
-
-* Register it in the transformation registry
-
-* Add it to your rules plan and POST via the API
-
-## Next Steps
-* Web UI: The system is ready to add a simple web interface for uploading configs/rules, monitoring jobs, etc.
