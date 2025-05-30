@@ -1,15 +1,14 @@
-from flask import Flask, request, jsonify
-from kafka import KafkaProducer
-import json
 import os
+import json
+from flask import Flask, request, jsonify
+from datetime import datetime
 
 app = Flask(__name__)
 
-KAFKA_BROKER = os.environ.get("KAFKA_BROKER", "kafka:9092")
-CONFIG_TOPIC = os.environ.get("CONFIG_TOPIC", "config_topic")
+CONFIG_SAVE_DIR = "/opt/flink/etl_app/configs"  # Make sure this exists and is mounted in Docker!
 
-def get_kafka_producer():
-    return KafkaProducer(bootstrap_servers=KAFKA_BROKER, value_serializer=lambda v: json.dumps(v).encode("utf-8"))
+if not os.path.exists(CONFIG_SAVE_DIR):
+    os.makedirs(CONFIG_SAVE_DIR, exist_ok=True)
 
 @app.route("/submit_config", methods=["POST"])
 def submit_config():
@@ -19,10 +18,18 @@ def submit_config():
             return jsonify({"error": "Missing JSON"}), 400
         if "config" not in req_json or "rules_plan" not in req_json:
             return jsonify({"error": "Both 'config' and 'rules_plan' are required!"}), 400
-        producer = get_kafka_producer()
-        producer.send(CONFIG_TOPIC, req_json)
-        producer.flush()
-        return jsonify({"status": "Config submitted to Kafka"}), 200
+
+        # Unique filename for each config
+        timestamp = datetime.utcnow().strftime("%Y%m%dT%H%M%S")
+        topic = req_json["config"].get("topic", "unknown_topic")
+        save_path = os.path.join(CONFIG_SAVE_DIR, f"{topic}_{timestamp}.json")
+        with open(save_path, "w") as f:
+            json.dump(req_json, f, indent=2)
+
+        # Here: Optionally, trigger Flink job with this config (see next step)
+        # (For now, just print)
+        print(f"Saved config to {save_path}")
+        return jsonify({"status": "Config saved", "config_path": save_path}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

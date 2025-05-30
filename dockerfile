@@ -1,24 +1,15 @@
-# Start from the official PyFlink image
-FROM apache/flink:1.17.0-python
+FROM flink:1.17.0-scala_2.12
 
 USER root
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-    python3-pip \
-    python3-dev \
-    openjdk-11-jre-headless \
-    && rm -rf /var/lib/apt/lists/*
+# Install python and pip (minimal)
+RUN apt-get update && apt-get install -y python3 python3-pip python3-setuptools
 
-# Install Python dependencies
-RUN pip install --upgrade pip && \
-    pip install pymongo requests kafka-python python-dateutil flask
+# Upgrade pip and install PyFlink
+RUN pip3 install --upgrade pip
+RUN pip3 install apache-flink==1.17.0 pymongo requests python-dateutil
 
-# Set up working directory
-WORKDIR /opt/flink/etl_app
+# If you want extra dependencies:
+# RUN pip3 install kafka-python confluent-kafka flask
 
-# Copy source code and configs
-COPY src/ ./src/
-COPY config/ ./config/
-
-ENV PYTHONPATH="/opt/flink/etl_app/src:$PYTHONPATH"
+USER flink

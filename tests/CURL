@@ -2,3 +2,5 @@ curl.exe -X POST http://localhost:8080/submit_config -H "Content-Type: applicati
 
 curl.exe -X POST http://localhost:8080/submit_config -H "Content-Type: application/json" -d "@C:\Users\ampoutas\Documents\ETL\etl_app\config\config_test.json"
 
+docker exec -it flink-jobmanager bash
+flink run -py /opt/flink/etl_app/src/flink_etl_job.py /opt/flink/etl_app/configs/my_config.json

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongo:
     image: mongo:latest
@@ -19,9 +17,6 @@ services:
     container_name: zookeeper
     ports:
       - "2181:2181"
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -31,25 +26,25 @@ services:
     ports:
       - "9092:9092"
       - "29092:29092"
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  flink-etl:
+  config_client:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: flink-etl
+    container_name: config_client
     depends_on:
       - kafka
-      - mongo
-    command: >
-      bash -c "python3 src/flink_etl_job.py /opt/flink/etl_app/config/config_and_rules.json"
+    ports:
+      - "8080:8080"
     working_dir: /opt/flink/etl_app
+    volumes:
+      - .:/opt/flink/etl_app
+
+  flink-jobmanager:
+    image: flink:1.17.0-python
+    container_name: flink-jobmanager
+    ports:
+      - "8081:8081"
     volumes:
       - .:/opt/flink/etl_app
 
