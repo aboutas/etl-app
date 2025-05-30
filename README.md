@@ -1,4 +1,4 @@
-# ETL Streaming Pipeline: Open Data → Kafka → PyFlink → MongoDB
+# ETL Pipeline: Open Data → Kafka → python → MongoDB
 
 ## Overview
 This project implements a flexible, real-time ETL (Extract, Transform, Load) pipeline in Python.
